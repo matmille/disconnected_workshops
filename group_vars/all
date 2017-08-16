@@ -53,10 +53,13 @@ guests:
       path: "{{ guest_image_dir }}"
 git_port: 8080
 git_projects: /var/lib/git
+exports_file_configuration: exports
+exports_file_configuration_template: "templates/hypervisor/{{ exports_file_configuration }}.j2"
 kickstart_directory: /var/www/html/ks
 kickstart_file_configuration: ks.cfg
 kickstart_file_configuration_template: "templates/hypervisor/{{ kickstart_file_configuration }}.j2"
 kvm_private_network_name: private
+kvm_private_network_network: 192.168.120.0
 kvm_private_network_ip: 192.168.120.1
 kvm_private_network_netmask: 255.255.255.0
 kvm_private_network_dhcp_start: 192.168.120.120
