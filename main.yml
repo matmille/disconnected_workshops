@@ -12,16 +12,6 @@
   hosts: all
 
   tasks:
-  - name: Create git projects directory
-    file:
-      path: "{{ git_projects }}"
-      state: directory
-      owner: nobody
-      group: nobody
-      mode: 0775
-    tags:
-      - hypervisor_setup
-
   - name: Start Kernel Virtual Machine (KVM) service (libvirtd)
     service:
       name: libvirtd
@@ -94,21 +84,6 @@
     tags:
       - hypervisor_setup
 
-  - name: Open firewall port(s) for GIT udp
-    firewalld:
-      port: "9148/udp"
-      permanent: true
-      state: enabled
-    tags:
-      - hypervisor_setup
-
-  - name: Open firewall port(s) for GIT Web
-    firewalld:
-      port: "{{ git_port }}/tcp"
-      permanent: true
-      state: enabled
-    tags:
-      - hypervisor_setup
 
   - name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
     service:
