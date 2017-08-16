@@ -91,6 +91,36 @@
     tags:
       - hypervisor_setup
 
+  - name: Create Ansible Tower Bundle directory
+    file:
+      path: "{{ share_directory }}/ansible"
+      state: directory
+      owner: nobody
+      group: nobody
+      mode: 0775
+    tags:
+      - hypervisor_setup
+
+  - name: Ensure Ansible Tower is staged
+    stat:
+      path: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
+    register: ansible_tower_download
+
+  - name: Download Ansible Tower Bundle
+    get_url:
+      url: "{{ ansible_tower_bundle_base_url }}/{{ ansible_tower_bundle_file }}"
+      dest: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
+    when: ansible_tower_download.stat.exists == False
+
+  - name: UnTar Ansible Tower Bundle
+    unarchive:
+      src: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
+      dest: "{{ share_directory }}/ansible"
+      extra_opts: "--strip-components=1"
+
+  - name: Lorax (build RHEL7 ISO)
+    shell: "setenforce 0; lorax --noverifyssl -p RHEL -v 7 -r 4 -s https://cdn.redhat.com/content/dist/rhel/server/7/4/x86_64/os {{ share_directory }}; setenforce 1"
+
   - name: Create git projects directory
     file:
       path: "{{ git_projects }}"

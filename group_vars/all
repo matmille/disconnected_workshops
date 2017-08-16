@@ -1,3 +1,5 @@
+ansible_tower_bundle_base_url: "https://releases.ansible.com/ansible-tower/setup-bundle"
+ansible_tower_bundle_file: "ansible-tower-setup-bundle-latest.el7.tar.gz"
 guest_image_dir: /var/lib/libvirt/images
 guest_url: /var/lib/libvirt/images/rhel7.iso
 guest_ram: 4096
