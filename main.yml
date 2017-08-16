@@ -163,6 +163,30 @@
     tags:
       - hypervisor_setup
 
+  - name: Open firewall port(s) for GIT tcp
+    firewalld:
+      port: "9148/tcp"
+      permanent: true
+      state: enabled
+    tags:
+      - hypervisor_setup
+
+  - name: Open firewall port(s) for GIT udp
+    firewalld:
+      port: "9148/udp"
+      permanent: true
+      state: enabled
+    tags:
+      - hypervisor_setup
+
+  - name: Open firewall port(s) for GIT Web
+    firewalld:
+      port: "{{ git_port }}/tcp"
+      permanent: true
+      state: enabled
+    tags:
+      - hypervisor_setup
+
   - name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
     service:
       name: httpd
@@ -253,6 +277,9 @@
       msg: "{{ item }}"
     with_items:
       - "{{ vms.list_vms }}"
+
+  - name: false
+    command: /bin/false
 
   - name: Create Virtual Machine
     shell: virt-install -n "{{ item.name }}"
