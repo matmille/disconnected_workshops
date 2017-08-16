@@ -1,0 +1,29 @@
+# See smb.conf.example for a more detailed config file or
+# read the smb.conf manpage.
+# Run 'testparm' to verify the config is correct after
+# you modified it.
+
+[global]
+workgroup = WORKGROUP
+netbios name = %h
+security = user
+passdb backend = tdbsam
+enable core files = no
+browseable = yes
+writeable = no
+printcap name = /dev/null
+load printers = no
+usershare allow guests = yes
+map to guest = bad user
+
+[share]
+comment = Share
+path = {{ share_directory }}
+available = yes
+browsable = yes
+writable = no
+public = yes
+guest ok = yes
+guest only = yes
+force user = nobody
+force group = nobody

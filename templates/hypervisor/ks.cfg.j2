@@ -1,0 +1,49 @@
+install
+cdrom
+lang en_US.UTF-8
+keyboard us
+network --onboot yes --device enps0 --bootproto dhcp --noipv6
+
+rootpw --iscrypted {{ password_root }}
+
+user --name=admin --groups=wheel --password={{ password_admin }} --iscrypted
+
+firewall --enabled --ssh
+authconfig --enableshadow --passalgo=sha512
+selinux --enforcing
+timezone --utc America/New_York
+
+# Plaintext password is: password
+bootloader --location=mbr --append="crashkernel=auto rhgb quiet" --password={{ password_grub2 }}
+
+# Initialize (format) all disks (optional)
+zerombr
+clearpart --all --initlabel
+
+# Create primary system partitions (required for installs)
+part /boot --fstype=xfs --size=512
+part pv.01 --grow --size=1
+
+# Create a Logical Volume Management (LVM) group (optional)
+volgroup VolGroup --pesize=4096 pv.01
+
+# Create particular logical volumes (optional)
+logvol / --fstype=xfs --name=LogVol06 --vgname=VolGroup --size=12288 --grow
+# CCE-26557-9: Ensure /home Located On Separate Partition
+logvol /home --fstype=xfs --name=LogVol02 --vgname=VolGroup --size=1024 --fsoptions="nodev"
+# CCE-26435-8: Ensure /tmp Located On Separate Partition
+logvol /tmp --fstype=xfs --name=LogVol01 --vgname=VolGroup --size=1024 --fsoptions="nodev,noexec,nosuid"
+# CCE-26639-5: Ensure /var Located On Separate Partition
+logvol /var --fstype=xfs --name=LogVol03 --vgname=VolGroup --size=2048 --fsoptions="nodev"
+# CCE-26215-4: Ensure /var/log Located On Separate Partition
+logvol /var/log --fstype=xfs --name=LogVol04 --vgname=VolGroup --size=1024 --fsoptions="nodev"
+# CCE-26436-6: Ensure /var/log/audit Located On Separate Partition
+logvol /var/log/audit --fstype=xfs --name=LogVol05 --vgname=VolGroup --size=512 --fsoptions="nodev"
+logvol swap --name=lv_swap --vgname=VolGroup --size=2016
+
+# Packages selection (%packages section is required)
+%packages --nobase
+@core --nodefaults
+%end
+
+reboot --eject

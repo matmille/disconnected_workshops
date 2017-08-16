@@ -1,0 +1,15 @@
+Listen *:{{ git_port }}
+
+NameVirtualHost *:{{ git_port }}
+
+<Directory {{ git_projects }}>
+  Options +ExecCGI
+  AddHandler cgi-script .cgi
+  DirectoryIndex gitweb.cgi
+</Directory>
+
+<VirtualHost *:{{ git_port }}>
+    DocumentRoot "{{ git_projects }}/"
+    ErrorLog "logs/git-error.log"
+    CustomLog "logs/git-access.log" combined
+</VirtualHost>

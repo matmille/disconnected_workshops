@@ -1,0 +1,17 @@
+Listen {{ kvm_private_network_ip }}:{{ www_port }}
+
+NameVirtualHost {{ kvm_private_network_ip }}:{{ www_port }}
+
+<Directory {{ kickstart_directory }}/>
+    Options FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Allow from all
+    Require all granted
+</Directory>
+
+<VirtualHost *:{{ www_port }}>
+    DocumentRoot "{{ kickstart_directory }}/"
+    ErrorLog "logs/kickstart-error.log"
+    CustomLog "logs/kickstart-access.log" combined
+</VirtualHost>
