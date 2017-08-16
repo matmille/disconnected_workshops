@@ -1,5 +1,5 @@
 ---
-- guest_images_dir: /var/lib/libvirt/images
+- guest_image_dir: /var/lib/libvirt/images
 - guest_url: /var/lib/libvirt/images/rhel7.iso
 # Define nodes for workshop environment
 - guests:
