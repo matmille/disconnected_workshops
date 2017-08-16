@@ -1,7 +1,9 @@
 ---
+- guest_images_dir: /var/lib/libvirt/images
+- guest_url: {{ guest_url }}
 - guests:
   - name: node-1
-    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    url: {{ guest_url }}
     cpu: 1
     mem: 4096
     virt_type: kvm
@@ -11,9 +13,9 @@
       variant: rhel7
     disk:
       size: 36
-      path: /var/lib/libvirt/images
+      path: {{ guest_image_dir }}
   - name: node-2
-    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    url:  {{ guest_url }}
     cpu: 1
     mem: 4096
     virt_type: kvm
@@ -23,9 +25,9 @@
       variant: rhel7
     disk:
       size: 36
-      path: /var/lib/libvirt/images
+      path: {{ guest_image_dir }}
   - name: node-3
-    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    url:  {{ guest_url }}
     cpu: 1
     mem: 4096
     virt_type: kvm
@@ -35,9 +37,9 @@
       variant: rhel7
     disk:
       size: 36
-      path: /var/lib/libvirt/images
+      path: {{ guest_image_dir }}
   - name: node-4
-    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    url:  {{ guest_url }}
     cpu: 1
     mem: 4096
     virt_type: kvm
@@ -47,7 +49,7 @@
       variant: rhel7
     disk:
       size: 36
-      path: /var/lib/libvirt/images
+      path: {{ guest_image_dir }}
 - git_port: 8080
 - git_projects: /var/lib/git
 - kickstart_directory: /var/www/html/ks
