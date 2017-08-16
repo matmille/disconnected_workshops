@@ -12,9 +12,6 @@
   hosts: all
 
   tasks:
-  - name: Lorax (build RHEL7 ISO)
-    shell: "setenforce 0; lorax --noverifyssl -p RHEL -v 7 -r 4 -s https://cdn.redhat.com/content/dist/rhel/server/7/4/x86_64/os {{ share_directory }}; setenforce 1"
-
   - name: Create git projects directory
     file:
       path: "{{ git_projects }}"
