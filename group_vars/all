@@ -1,0 +1,71 @@
+---
+- guests:
+  - name: node-1
+    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    cpu: 1
+    mem: 4096
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+      type: linux
+      variant: rhel7
+    disk:
+      size: 36
+      path: /var/lib/libvirt/images
+  - name: node-2
+    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    cpu: 1
+    mem: 4096
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+      type: linux
+      variant: rhel7
+    disk:
+      size: 36
+      path: /var/lib/libvirt/images
+  - name: node-3
+    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    cpu: 1
+    mem: 4096
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+      type: linux
+      variant: rhel7
+    disk:
+      size: 36
+      path: /var/lib/libvirt/images
+  - name: node-4
+    url: /var/lib/libvirt/ISOs/rhel-server-7.3-x86_64-dvd.iso
+    cpu: 1
+    mem: 4096
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+      type: linux
+      variant: rhel7
+    disk:
+      size: 36
+      path: /var/lib/libvirt/images
+- git_port: 8080
+- git_projects: /var/lib/git
+- kickstart_directory: /var/www/html/ks
+- kickstart_file_configuration: ks.cfg
+- kickstart_file_configuration_template: "templates/hypervisor/{{ kickstart_file_configuration }}.j2"
+- kvm_private_network_name: private
+- kvm_private_network_ip: 192.168.120.1
+- kvm_private_network_netmask: 255.255.255.0
+- kvm_private_network_dhcp_start: 192.168.120.120
+- kvm_private_network_dhcp_end: 192.168.120.254
+# Password example:  Password is 'password'
+- password_root: $6$rhel6usgcb$aS6oPGXcPKp3OtFArSrhRwu6sN8q2.yEGY7AIwDOQd23YCtiz9c5mXbid1BzX9bmXTEZi.hCzTEXFosVBI5ng0
+- password_admin: $6$rhel6usgcb$aS6oPGXcPKp3OtFArSrhRwu6sN8q2.yEGY7AIwDOQd23YCtiz9c5mXbid1BzX9bmXTEZi.hCzTEXFosVBI5ng0
+- password_grub2: $6$rhel6usgcb$aS6oPGXcPKp3OtFArSrhRwu6sN8q2.yEGY7AIwDOQd23YCtiz9c5mXbid1BzX9bmXTEZi.hCzTEXFosVBI5ng0
+- samba_file_configuration: smb.conf
+- samba_file_configuration_template: "templates/hypervisor/{{ samba_file_configuration }}.j2"
+- www_file_configuration_ks: ks.conf
+- www_file_configuration_ks_template: "templates/hypervisor/{{ www_file_configuration_ks }}.j2"
+- www_port: 8000
+- share_directory: /shared
+...
