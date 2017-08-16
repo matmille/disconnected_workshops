@@ -26,6 +26,7 @@
       - qemu-kvm
       - qemu-kvm-common
       - qemu-kvm-tools
+      - rpcbind
       - samba
       - virt-install
       - virt-manager
@@ -209,6 +210,44 @@
       port: "{{ www_port }}/tcp"
       permanent: true
       state: enabled
+    tags:
+      - hypervisor_setup
+
+  - name: Stage NFS configuration
+    template:
+      src: "{{ exports_file_configuration_template }}"
+      dest: "/etc/{{ exports_file_configuration }}"
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - hypervisor_setup
+
+  - name: Start NFS service
+    service:
+      name: nfs
+      state: started
+      enabled: yes
+    tags:
+      - hypervisor_setup
+
+  - name: re-Start NFS service (ensure latest configuraiton is loaded)
+    service:
+      name: nfs
+      state: restarted
+      enabled: yes
+    tags:
+      - hypervisor_setup
+
+  - name: Open firewall port for NFS
+    firewalld:
+      service: "{{ item }}"
+      permanent: true
+      state: enabled
+    with_items:
+      - nfs
+      - mountd
+      - rpc-bind
     tags:
       - hypervisor_setup
 
