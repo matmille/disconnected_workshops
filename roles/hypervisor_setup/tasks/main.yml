@@ -114,3 +114,56 @@
     src: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
     dest: "{{ share_directory }}/ansible"
     extra_opts: "--strip-components=1"
+    - name: Start GIT daemon
+      service:
+        name: git.socket
+        state: started
+        enabled: yes
+      tags:
+        - hypervisor_setup
+
+- name: re-Start GIT daemon (to ensure latest configuration is loaded)
+  service:
+    name: git.socket
+    state: restarted
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port(s) for GIT tcp
+  firewalld:
+    port: "9148/tcp"
+    permanent: true
+    state: enabled
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port(s) for GIT udp
+  firewalld:
+    port: "9148/udp"
+    permanent: true
+    state: enabled
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port(s) for GIT Web
+  firewalld:
+    port: "{{ git_port }}/tcp"
+    permanent: true
+    state: enabled
+  tags:
+    - hypervisor_setup
+
+- name: Update /etc/shells for git-shell
+  lineinfile:
+    path: /etc/shells
+    line: "/bin/git-shell"
+
+- name: Create GIT user
+  user:
+    name: git
+    password: "{{ password_git }}"
+    home: "{{ git_project }}"
+    shell: "/bin/git-shell"
+    generate_ssh_key: yes
+    update_password: always
