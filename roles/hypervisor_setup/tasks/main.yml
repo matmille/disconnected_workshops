@@ -114,13 +114,14 @@
     src: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
     dest: "{{ share_directory }}/ansible"
     extra_opts: "--strip-components=1"
-    - name: Start GIT daemon
-      service:
-        name: git.socket
-        state: started
-        enabled: yes
-      tags:
-        - hypervisor_setup
+
+- name: Start GIT daemon
+  service:
+    name: git.socket
+    state: started
+    enabled: yes
+  tags:
+    - hypervisor_setup
 
 - name: re-Start GIT daemon (to ensure latest configuration is loaded)
   service:
