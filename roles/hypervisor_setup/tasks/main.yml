@@ -158,12 +158,33 @@
   lineinfile:
     path: /etc/shells
     line: "/bin/git-shell"
+  tags:
+    - hypervisor_setup
 
 - name: Create GIT user
   user:
     name: git
     password: "{{ password_git }}"
-    home: "{{ git_project }}"
+    home: "{{ git_projects }}"
     shell: "/bin/git-shell"
     generate_ssh_key: yes
     update_password: always
+  tags:
+    - hypervisor_setup
+
+- name: Stat authorized_keys
+  stat:
+    path: "{{ git_projects }}/authorized_keys"
+    register: stat_authorized_keys
+  tags:
+    - hypervisor_setup
+
+ - name: Allow GIT access
+   copy:
+     src: "{{ git_projects }}/id_rsa.pub"
+     dest: "{{ git_projects }}/authorized_keys"
+     owner: git
+     group: git
+   when: stat_authorized_keys.stat.exists == False
+   tags:
+     - hypervisor_setup
