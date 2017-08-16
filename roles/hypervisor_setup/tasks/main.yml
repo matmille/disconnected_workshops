@@ -179,12 +179,12 @@
   tags:
     - hypervisor_setup
 
- - name: Allow GIT access
-   copy:
-     src: "{{ git_projects }}/id_rsa.pub"
-     dest: "{{ git_projects }}/authorized_keys"
-     owner: git
-     group: git
-   when: stat_authorized_keys.stat.exists == False
-   tags:
-     - hypervisor_setup
+- name: Allow GIT access
+  copy:
+    src: "{{ git_projects }}/id_rsa.pub"
+    dest: "{{ git_projects }}/authorized_keys"
+    owner: git
+    group: git
+  when: stat_authorized_keys.stat.exists == False
+  tags:
+   - hypervisor_setup
