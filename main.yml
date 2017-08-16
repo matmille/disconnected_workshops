@@ -1,4 +1,11 @@
 ---
+
+- name: configure hypervisor
+  become: yes
+  hosts: hypervisor
+  roles:
+    - { role: hypervisor_setup }
+
 # Unstable and still in development
 - name: Build Setup
   user: root
