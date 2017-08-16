@@ -1,12 +1,13 @@
 ---
 - guest_images_dir: /var/lib/libvirt/images
 - guest_url: /var/lib/libvirt/images/rhel7.iso
+- guest_ram: 4096
 # Define nodes for workshop environment
 - guests:
   - name: node-1
     url: "{{ guest_url }}"
     cpu: 1
-    mem: 4096
+    mem: "{{ guest_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
@@ -18,7 +19,7 @@
   - name: node-2
     url:  "{{ guest_url }}"
     cpu: 1
-    mem: 4096
+    mem: "{{ guest_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
@@ -30,7 +31,7 @@
   - name: node-3
     url:  "{{ guest_url }}"
     cpu: 1
-    mem: 4096
+    mem: "{{ guest_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
@@ -42,7 +43,7 @@
   - name: node-4
     url:  "{{ guest_url }}"
     cpu: 1
-    mem: 4096
+    mem: "{{ guest_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
