@@ -14,6 +14,7 @@
     - libvirt-daemon
     - libvirt-daemon-driver-qemu
     - libvirt-python
+    - lorax
     - nfs-utils
     - policycoreutils-python
     - python-lxml
@@ -109,6 +110,7 @@
 
 - name: UnTar Ansible Tower Bundle
   unarchive:
+    remote_src: yes
     src: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
     dest: "{{ share_directory }}/ansible"
     extra_opts: "--strip-components=1"
