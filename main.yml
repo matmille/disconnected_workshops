@@ -12,34 +12,6 @@
   hosts: all
 
   tasks:
-  - name: Install prerequisite RPM packages on hypervisor host
-    yum:
-      name: "{{ item }}"
-      state: present
-    with_items:
-      - git
-      - gitweb
-      - git-daemon
-      - httpd
-      - libselinux-python
-      - libvirt-client
-      - libvirt-daemon
-      - libvirt-daemon-driver-qemu
-      - libvirt-python
-      - nfs-utils
-      - policycoreutils-python
-      - python-lxml
-      - qemu-img
-      - qemu-kvm
-      - qemu-kvm-common
-      - qemu-kvm-tools
-      - rpcbind
-      - samba
-      - virt-install
-      - virt-manager
-    tags:
-      - hypervisor_setup
-
   - name: Enable Port for HTTP communication in SELinux
     seport:
       ports: "{{ www_port }}"
