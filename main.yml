@@ -2,7 +2,7 @@
 
 - name: configure hypervisor
   become: yes
-  hosts: hypervisor
+  hosts: hypervisors
   roles:
     - { role: hypervisor_setup }
 

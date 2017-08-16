@@ -182,6 +182,7 @@
 
 - name: Allow GIT access
   copy:
+    remote_src: True
     src: "{{ git_projects }}/.ssh/id_rsa.pub"
     dest: "{{ git_projects }}/.ssh/authorized_keys"
     owner: git
