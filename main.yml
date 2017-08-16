@@ -60,31 +60,6 @@
     tags:
       - hypervisor_setup
 
-  - name: Start GIT daemon
-    service:
-      name: git.socket
-      state: started
-      enabled: yes
-    tags:
-      - hypervisor_setup
-
-  - name: re-Start GIT daemon (to ensure latest configuration is loaded)
-    service:
-      name: git.socket
-      state: restarted
-      enabled: yes
-    tags:
-      - hypervisor_setup
-
-  - name: Open firewall port(s) for GIT tcp
-    firewalld:
-      port: "9148/tcp"
-      permanent: true
-      state: enabled
-    tags:
-      - hypervisor_setup
-
-
   - name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
     service:
       name: httpd
