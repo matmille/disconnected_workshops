@@ -19,6 +19,7 @@
       - libvirt-daemon
       - libvirt-daemon-driver-qemu
       - libvirt-python
+      - nfs-utils
       - policycoreutils-python
       - python-lxml
       - qemu-img
