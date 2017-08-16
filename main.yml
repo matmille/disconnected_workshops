@@ -254,6 +254,9 @@
     with_items:
       - "{{ vms.list_vms }}"
 
+  - name: Fail
+    command: /bin/false
+
   - name: Create Virtual Machine
     shell: virt-install -n "{{ item.name }}"
            -r "{{ item.mem }}"
