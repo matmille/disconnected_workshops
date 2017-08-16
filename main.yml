@@ -149,7 +149,7 @@
 
   - name: Start GIT daemon
     service:
-      name: git-daemon
+      name: git.socket
       state: started
       enabled: yes
     tags:
@@ -157,7 +157,7 @@
 
   - name: re-Start GIT daemon (to ensure latest configuration is loaded)
     service:
-      name: git-daemon
+      name: git.socket
       state: restarted
       enabled: yes
     tags:
