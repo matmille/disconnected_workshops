@@ -62,6 +62,11 @@
   with_items:
     - "{{ vms.list_vms }}"
 
+- name: Create RHEL ISO for VM Installation
+  shell: dd if=/dev/cdrom of=/var/lib/libvirt/images/rhel7.iso
+  args:
+    creates: /var/lib/libvirt/images/rhel7.iso
+
 - name: Create Virtual Machine
   shell: virt-install -n "{{ item.name }}"
          -r "{{ item.mem }}"
