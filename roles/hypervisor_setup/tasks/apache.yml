@@ -1,0 +1,39 @@
+---
+
+#####
+# Apache
+
+- name: Enable Port for HTTP communication in SELinux
+  seport:
+    ports: "{{ www_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  ignore_errors: yes
+  tags:
+    - hypervisor_setup
+
+- name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  tags:
+   - hypervisor_setup
+
+- name: re-Start Apache HTTPD (to ensure latest configuration is loaded)
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port for Apache HTTPD
+  firewalld:
+    port: "{{ www_port }}/tcp"
+    permanent: true
+    state: enabled
+  tags:
+    - hypervisor_setup
+

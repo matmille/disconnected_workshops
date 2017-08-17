@@ -1,0 +1,42 @@
+---
+
+#####
+# Kickstart Web Config
+
+- name: Stage Apache HTTPD kickstart configuration file
+  template:
+    src: "{{ www_file_configuration_ks_template }}"
+    dest: "/etc/httpd/conf.d/{{ www_file_configuration_ks }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
+
+- name: Create kickstart configuration file directory available via web service
+  file:
+    path: "{{ kickstart_directory }}"
+    state: directory
+    owner: apache
+    group: apache
+    mode: 0775
+  tags:
+    - hypervisor_setup
+
+- name: Stage kickstart configuration file for guest network configuration installations
+  template:
+    src: "{{ kickstart_file_configuration_template }}"
+    dest: "{{ kickstart_directory }}/{{ kickstart_file_configuration }}"
+    owner: apache
+    group: apache
+    mode: "a=r"
+
+- name: Set SELinux context of kickstart file
+  sefcontext:
+    target: "{{ kickstart_directory }}/{{ kickstart_file_configuration }}"
+    setype: httpd_sys_content_t
+    state: present
+  ignore_errors: yes
+
+- name: Run restore context to reload SELinux
+  shell: "restorecon -Rv {{ kickstart_directory }}"

@@ -1,0 +1,47 @@
+---
+
+#####
+# Samba
+
+- name: Stage Samba configuration file
+  template:
+    src: "{{ samba_file_configuration_template }}"
+    dest: "/etc/samba/{{ samba_file_configuration }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
+
+- name: Start Samba to provide SMB/CIFS networking service
+  service:
+    name: smb
+    state: started
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: re-Start Samba (to ensure latest configuration is loaded)
+  service:
+    name: smb
+    state: restarted
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port(s) for Samba
+  firewalld:
+    service: samba
+    permanent: true
+    state: enabled
+  tags:
+    - hypervisor_setup
+
+- name: Reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
