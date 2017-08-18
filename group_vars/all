@@ -69,7 +69,7 @@ kvm_private_network_ip: 192.168.120.1
 kvm_private_network_netmask: 255.255.255.0
 kvm_private_network_dhcp_start: 192.168.120.120
 kvm_private_network_dhcp_end: 192.168.120.254
-# Password example:  Password is 'password'
+# Password example:  Password is 'server'
 password_root: $6$rhel6usgcb$aS6oPGXcPKp3OtFArSrhRwu6sN8q2.yEGY7AIwDOQd23YCtiz9c5mXbid1BzX9bmXTEZi.hCzTEXFosVBI5ng0
 password_admin: $6$rhel6usgcb$aS6oPGXcPKp3OtFArSrhRwu6sN8q2.yEGY7AIwDOQd23YCtiz9c5mXbid1BzX9bmXTEZi.hCzTEXFosVBI5ng0
 password_grub2: $6$rhel6usgcb$aS6oPGXcPKp3OtFArSrhRwu6sN8q2.yEGY7AIwDOQd23YCtiz9c5mXbid1BzX9bmXTEZi.hCzTEXFosVBI5ng0

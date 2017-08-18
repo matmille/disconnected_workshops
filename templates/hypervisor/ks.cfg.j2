@@ -44,6 +44,11 @@ logvol swap --name=lv_swap --vgname=VolGroup --size=2016
 # Packages selection (%packages section is required)
 %packages --nobase
 @core --nodefaults
+cockpit
+cockpit-dashboard
+cockpit-shell
+cockpit-system
+cockpit-ws
 %end
 
 reboot --eject
