@@ -1,6 +1,6 @@
-Listen {{ kvm_private_network_ip }}:{{ www_port }}
+Listen *:{{ www_port }}
 
-NameVirtualHost {{ kvm_private_network_ip }}:{{ www_port }}
+NameVirtualHost *:{{ www_port }}
 
 <Directory {{ kickstart_directory }}/>
     Options FollowSymLinks
