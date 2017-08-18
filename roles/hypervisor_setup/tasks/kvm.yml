@@ -61,11 +61,15 @@
     msg: "{{ item }}"
   with_items:
     - "{{ vms.list_vms }}"
+  tags:
+    - hypervisor_setup
 
 - name: Create RHEL ISO for VM Installation
   shell: dd if=/dev/cdrom of=/var/lib/libvirt/images/rhel7.iso
   args:
     creates: /var/lib/libvirt/images/rhel7.iso
+  tags:
+    - hypervisor_setup
 
 - name: Create Virtual Machine
   shell: virt-install -n "{{ item.name }}"
@@ -85,15 +89,22 @@
   when: item.name not in vms.list_vms
   with_items:
     - "{{ guests }}"
+  tags:
+    - hypervisor_setup
 
 - name: Allow time for newly created Virtual Machine to boot
   pause:
     minutes: 1
+  tags:
+    - hypervisor_setup
 
 - name: Query KVM for environment/VM details
   virt:
     command: info
   register: virt_info
+  tags:
+    - hypervisor_setup
+
 - name: Ensure all created Virtual Machines are running
   virt:
     name: "{{ item.name }}"
@@ -101,6 +112,8 @@
   when: virt_info[item.name]['state'] != 'running'
   with_items:
     - "{{ guests }}"
+  tags:
+    - hypervisor_setup
 
 - name: Wait for all Virtual Machines to enter running state
   virt:
@@ -111,22 +124,72 @@
   delay: 10
   with_items:
     - "{{ guests }}"
+  tags:
+    - hypervisor_setup
 
 - name: Display each Virtual Machine and its IP address
   debug:
     msg: "{{ item }}"
   with_items:
     - "{{ vms.list_vms }}"
+  tags:
+    - hypervisor_setup
 
 - name: Query Hypervisor
   virt:
     command: info
   register: virt_info
   tags:
-    - vm_clean
+    - hypervisor_setup
 
 - name: Display output of Hypervisor query
   debug:
     msg: "{{ virt_info }}"
   tags:
-    - vm_clean
+    - hypervisor_setup
+
+- name: Ensure all Virtual Machines are stopped
+  virt:
+    name: "{{ item.name }}"
+    command: shutdown
+  when:
+    - virt_info[item.name] is defined
+    - virt_info[item.name]['state'] != "shutdown"
+  with_items:
+    - "{{ guests }}"
+  register: vm_shutdown
+  tags:
+    - hypervisor_setup
+
+- name: Wait for Virtual Machines to cleanly shutdown
+  pause:
+    minutes: 1
+  when: vm_shutdown.changed
+  tags:
+    - hypervisor_setup
+
+- name: Ensure all Virtal Machines are down (else force)
+  virt:
+    name: "{{ item.name }}"
+    command: destroy
+  ignore_errors: yes
+  when:
+    - virt_info[item.name] is defined
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Wait for all Virtual Machines to be shutdown and/or are offline
+  virt:
+    command: info
+  register: virt_info
+  until: virt_info[item.name]['state'] != 'destroyed' or virt_info[item.name]['state'] != "shutdown"
+  when:
+    - virt_info[item.name] is defined
+  retries: 1500
+  delay: 10
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
