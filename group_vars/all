@@ -5,7 +5,7 @@ guest_url: /var/lib/libvirt/images/rhel7.iso
 guest_ram: 4096
 # Define nodes for workshop environment
 guests:
-  - name: node-1
+  - name: tower-1
     url: "{{ guest_url }}"
     cpu: 1
     mem: "{{ guest_ram }}"
@@ -17,6 +17,33 @@ guests:
     disk:
       size: 36
       path: "{{ guest_image_dir }}"
+    ks: "tower"
+  - name: node-1
+    url:  "{{ guest_url }}"
+    cpu: 1
+    mem: "{{ guest_ram }}"
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+      type: linux
+      variant: rhel7
+    disk:
+      size: 36
+      path: "{{ guest_image_dir }}"
+    ks: "node"
+  - name: tower-2
+    url:  "{{ guest_url }}"
+    cpu: 1
+    mem: "{{ guest_ram }}"
+    virt_type: kvm
+    virt_hypervisor: hvm
+    os:
+      type: linux
+      variant: rhel7
+    disk:
+      size: 36
+      path: "{{ guest_image_dir }}"
+    ks: "tower"
   - name: node-2
     url:  "{{ guest_url }}"
     cpu: 1
@@ -29,30 +56,7 @@ guests:
     disk:
       size: 36
       path: "{{ guest_image_dir }}"
-  - name: node-3
-    url:  "{{ guest_url }}"
-    cpu: 1
-    mem: "{{ guest_ram }}"
-    virt_type: kvm
-    virt_hypervisor: hvm
-    os:
-      type: linux
-      variant: rhel7
-    disk:
-      size: 36
-      path: "{{ guest_image_dir }}"
-  - name: node-4
-    url:  "{{ guest_url }}"
-    cpu: 1
-    mem: "{{ guest_ram }}"
-    virt_type: kvm
-    virt_hypervisor: hvm
-    os:
-      type: linux
-      variant: rhel7
-    disk:
-      size: 36
-      path: "{{ guest_image_dir }}"
+    ks: "node"
 git_port: 8080
 git_projects: /var/lib/git
 git_www: /var/www/git

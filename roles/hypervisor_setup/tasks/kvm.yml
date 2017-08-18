@@ -80,7 +80,7 @@
          --virt-type "{{ item.virt_type }}"
          --disk size="{{ item.disk.size }}",path="{{ item.disk.path }}/{{ item.name }}".qcow2,format=qcow2
          --disk path="{{ item.url }}",device=cdrom
-         --extra-args="ks=http://{{ kvm_private_network_ip }}:{{ www_port }}/{{ kickstart_file_configuration}} ip=dhcp"
+         --extra-args="ks=http://{{ kvm_private_network_ip }}:{{ www_port }}/{{ kickstart_file_configuration}}-{{ item.ks }} ip=dhcp"
          --check path_in_use=off
   when: item.name not in vms.list_vms
   with_items:
@@ -130,4 +130,3 @@
     msg: "{{ virt_info }}"
   tags:
     - vm_clean
-
