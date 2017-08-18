@@ -8,6 +8,11 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - cockpit
+    - cockpit-dashboard
+    - cockpit-shell
+    - cockpit-system
+    - cockpit-ws
     - git
     - gitweb
     - git-daemon
@@ -21,17 +26,14 @@
     - nfs-utils
     - policycoreutils-python
     - python-lxml
-    - rsync
     - qemu-img
     - qemu-kvm
     - qemu-kvm-common
     - qemu-kvm-tools
     - rpcbind
     - samba
-    - vim
     - virt-install
     - virt-manager
-    - xauth
   tags:
     - hypervisor_setup
 
