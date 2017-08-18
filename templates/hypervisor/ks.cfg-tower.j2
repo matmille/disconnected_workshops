@@ -28,7 +28,7 @@ part pv.01 --grow --size=1
 volgroup VolGroup --pesize=4096 pv.01
 
 # Create particular logical volumes (optional)
-logvol / --fstype=xfs --name=LogVol06 --vgname=VolGroup --size=4096 --grow
+logvol / --fstype=xfs --name=LogVol06 --vgname=VolGroup --size=12288 --grow
 # CCE-26557-9: Ensure /home Located On Separate Partition
 logvol /home --fstype=xfs --name=LogVol02 --vgname=VolGroup --size=1024 --fsoptions="nodev"
 # CCE-26435-8: Ensure /tmp Located On Separate Partition
