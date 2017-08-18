@@ -2,59 +2,62 @@ ansible_tower_bundle_base_url: "https://releases.ansible.com/ansible-tower/setup
 ansible_tower_bundle_file: "ansible-tower-setup-bundle-latest.el7.tar.gz"
 guest_image_dir: /var/lib/libvirt/images
 guest_url: /var/lib/libvirt/images/rhel7.iso
-guest_ram: 4096
+guest_node_ram: 2048
+guest_tower_ram: 4096
+guest_node_disk: 12
+guest_tower_disk: 36
 # Define nodes for workshop environment
 guests:
   - name: tower-1
     url: "{{ guest_url }}"
     cpu: 1
-    mem: "{{ guest_ram }}"
+    mem: "{{ guest_tower_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
       type: linux
       variant: rhel7
     disk:
-      size: 36
+      size: "{{ guest_tower_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "tower"
   - name: node-1
     url:  "{{ guest_url }}"
     cpu: 1
-    mem: "{{ guest_ram }}"
+    mem: "{{ guest_node_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
       type: linux
       variant: rhel7
     disk:
-      size: 36
+      size: "{{ guest_node_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "node"
   - name: tower-2
     url:  "{{ guest_url }}"
     cpu: 1
-    mem: "{{ guest_ram }}"
+    mem: "{{ guest_tower_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
       type: linux
       variant: rhel7
     disk:
-      size: 36
+      size: "{{ guest_tower_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "tower"
   - name: node-2
     url:  "{{ guest_url }}"
     cpu: 1
-    mem: "{{ guest_ram }}"
+    mem: "{{ guest_node_ram }}"
     virt_type: kvm
     virt_hypervisor: hvm
     os:
       type: linux
       variant: rhel7
     disk:
-      size: 36
+      size: "{{ guest_node_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "node"
 git_port: 8080
