@@ -33,7 +33,16 @@
   firewalld:
     port: "{{ www_port }}/tcp"
     permanent: true
+    zone: public
     state: enabled
+  tags:
+    - hypervisor_setup
+
+- name: Reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+    enabled: yes
   tags:
     - hypervisor_setup
 

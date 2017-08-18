@@ -55,6 +55,9 @@ guests:
       path: "{{ guest_image_dir }}"
 git_port: 8080
 git_projects: /var/lib/git
+git_www: /var/www/git
+git_file_configuration: git.conf
+git_file_configuration_template: "templates/hypervisor/{{ git_file_configuration }}.j2"
 exports_file_configuration: exports
 exports_file_configuration_template: "templates/hypervisor/{{ exports_file_configuration }}.j2"
 kickstart_directory: /var/www/html/ks

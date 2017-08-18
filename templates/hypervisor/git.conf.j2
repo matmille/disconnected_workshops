@@ -2,14 +2,18 @@ Listen *:{{ git_port }}
 
 NameVirtualHost *:{{ git_port }}
 
-<Directory {{ git_projects }}>
+<Directory {{ git_www }}>
   Options +ExecCGI
+	AllowOverride All
+  Order deny,allow
+  Allow from all
+  Require all granted
   AddHandler cgi-script .cgi
   DirectoryIndex gitweb.cgi
 </Directory>
 
 <VirtualHost *:{{ git_port }}>
-    DocumentRoot "{{ git_projects }}/"
+    DocumentRoot "{{ git_www }}/"
     ErrorLog "logs/git-error.log"
     CustomLog "logs/git-access.log" combined
 </VirtualHost>

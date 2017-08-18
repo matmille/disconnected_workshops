@@ -87,14 +87,14 @@
 - include: git.yml
 
 #####
-# KVM
-
-- include: kvm.yml
-
-#####
 # Apache
 
 - include: apache.yml
+
+#####
+# KVM
+
+- include: kvm.yml
 
 #####
 # NFS

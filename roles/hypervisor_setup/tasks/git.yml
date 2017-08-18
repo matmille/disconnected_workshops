@@ -174,3 +174,12 @@
   tags:
     - hypervisor_setup
 
+- name: Install Apache config for git VH
+  template:
+    src: "{{ git_file_configuration_template }}"
+    dest: "/etc/httpd/conf.d/{{ git_file_configuration }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
