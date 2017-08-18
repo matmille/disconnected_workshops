@@ -21,14 +21,17 @@
     - nfs-utils
     - policycoreutils-python
     - python-lxml
+    - rsync
     - qemu-img
     - qemu-kvm
     - qemu-kvm-common
     - qemu-kvm-tools
     - rpcbind
     - samba
+    - vim
     - virt-install
     - virt-manager
+    - xauth
   tags:
     - hypervisor_setup
 
