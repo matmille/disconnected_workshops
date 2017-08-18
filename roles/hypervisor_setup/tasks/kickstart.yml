@@ -25,17 +25,27 @@
 
 - name: Stage kickstart configuration file for guest network configuration installations
   template:
-    src: "{{ kickstart_file_configuration_template }}"
-    dest: "{{ kickstart_directory }}/{{ kickstart_file_configuration }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: apache
     group: apache
     mode: "a=r"
+  with_items:
+    - name: node
+      src: "{{ kickstart_node_configuration_template }}"
+      dest: "{{ kickstart_directory }}/{{ kickstart_node_configuration }}"
+    - name: tower
+      src: "{{ kickstart_tower_configuration_template }}"
+      dest: "{{ kickstart_directory }}/{{ kickstart_tower_configuration }}"
 
 - name: Set SELinux context of kickstart file
   sefcontext:
-    target: "{{ kickstart_directory }}/{{ kickstart_file_configuration }}"
+    target: "{{ item }}"
     setype: httpd_sys_content_t
     state: present
+  with_items:
+    - "{{ kickstart_directory }}/{{ kickstart_node_configuration }}"
+    - "{{ kickstart_directory }}/{{ kickstart_tower_configuration }}"
   ignore_errors: yes
 
 - name: Run restore context to reload SELinux

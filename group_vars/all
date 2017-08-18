@@ -65,8 +65,10 @@ git_file_configuration_template: "templates/hypervisor/{{ git_file_configuration
 exports_file_configuration: exports
 exports_file_configuration_template: "templates/hypervisor/{{ exports_file_configuration }}.j2"
 kickstart_directory: /var/www/html/ks
-kickstart_file_configuration: ks.cfg
-kickstart_file_configuration_template: "templates/hypervisor/{{ kickstart_file_configuration }}.j2"
+kickstart_node_configuration: ks.cfg-node
+kickstart_tower_configuration: ks.cfg-tower
+kickstart_node_configuration_template: "templates/hypervisor/{{ kickstart_node_configuration }}.j2"
+kickstart_tower_configuration_template: "templates/hypervisor/{{ kickstart_tower_configuration }}.j2"
 kvm_private_network_name: private
 kvm_private_network_network: 192.168.120.0
 kvm_private_network_ip: 192.168.120.1
