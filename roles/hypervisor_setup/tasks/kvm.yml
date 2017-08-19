@@ -220,10 +220,9 @@
     - hypervisor_setup
 
 - name: Set hostname of each of the systems
-  lineinfile:
-    path: /guests/{{ item.name }}/etc/hostname
-    regexp: 'localhost.localdomain'
-    line: "{{ item.name }}"
+  copy:
+    dest: /guests/{{ item.name }}/etc/hostname
+    content: "{{ item.name }}.default"
   with_items:
     - "{{ guests }}"
   tags:
