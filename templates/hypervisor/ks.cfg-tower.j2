@@ -8,10 +8,12 @@ rootpw --iscrypted {{ password_root }}
 
 user --name=admin --groups=wheel --password={{ password_admin }} --iscrypted
 
-firewall --enabled --ssh
+firewall --enabled --ssh --port=9090:tcp
 authconfig --enableshadow --passalgo=sha512
 selinux --enforcing
 timezone --utc America/New_York
+
+services --enabled=cockpit.socket
 
 # Plaintext password is: password
 bootloader --location=mbr --append="crashkernel=auto rhgb quiet" --password={{ password_grub2 }}

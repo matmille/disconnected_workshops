@@ -228,6 +228,15 @@
   tags:
     - hypervisor_setup
 
+- name: guestmount does not support SELinux chcon - Forcing with .autorelabel
+  copy:
+    dest: /guests/{{ item.name }}/.autorelabel
+    content: ""
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
 - name: un-Mount root filesystem for all guests to the hypervisor
   shell: guestunmount /guests/{{ item.name }}
   with_items:
@@ -237,6 +246,96 @@
 
 - name: Mount home filesystem for all guests to the hypervisor
   shell: guestmount -m /dev/VolGroup/LogVol02:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for guest SSH keys (on guest)
+  file:
+    path: /guests/{{ item.name }}/admin/.ssh
+    state: directory
+    owner: admin
+    group: admin
+    setype: ssh_home_t
+    mode: 0700
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Generate SSH keys for admin user
+  shell: ssh-keygen -t rsa -f /guests/{{ item.name }}/admin/.ssh/id_rsa -q -N ""
+  args:
+    creates: /guests/{{ item.name }}/admin/.ssh/id_rsa
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Set ownership on SSH keys (private key)
+  file:
+    path: /guests/{{ item.name }}/admin/.ssh/id_rsa
+    owner: admin
+    group: admin
+    setype: ssh_home_t
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Set ownership on SSH keys (public key)
+  file:
+    path: /guests/{{ item.name }}/admin/.ssh/id_rsa.pub
+    owner: admin
+    group: admin
+    setype: ssh_home_t
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for guest SSH public keys (hypervisor)
+  file:
+    path: /guests/.ssh
+    state: directory
+    mode: 0700
+  tags:
+    - hypervisor_setup
+
+
+- name: Copy SSH public keys to hypervisor
+  copy:
+    src: /guests/{{ item.name }}/admin/.ssh/id_rsa.pub
+    dest: /guests/.ssh/{{ item.name }}.id_rsa.pub
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Create authorized_keys file for each guest
+  assemble:
+    src: /guests/.ssh
+    dest: /guests/{{ item.name }}/admin/.ssh/authorized_keys
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Set ownership on SSH keys (authorized_keys)
+  file:
+    path: /guests/{{ item.name }}/admin/.ssh/authorized_keys
+    owner: admin
+    group: admin
+    setype: ssh_home_t
+    mode: 0644
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Run restore context to reload SELinux
+  shell: "restorecon -Rv /guests/{{ item.name }}/admin/.ssh"
   with_items:
     - "{{ guests }}"
   tags:
