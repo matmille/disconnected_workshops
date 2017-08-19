@@ -228,6 +228,23 @@
   tags:
     - hypervisor_setup
 
+- name: Create directory for guest SSH host keys (hypervisor)
+  file:
+    path: /guests/.ssh-host-keys
+    state: directory
+    mode: 0700
+  tags:
+    - hypervisor_setup
+
+- name: Copy SSH host keys to hypervisor (format known_hosts)
+  copy:
+    content: "{{ item.name }} {{ lookup('file', \"/guests/{{ item.name }}/etc/ssh/ssh_host_ecdsa_key.pub\") }}"
+    dest: /guests/.ssh-host-keys/{{ item.name }}.ssh_host_ecdsa.pub
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
 - name: guestmount does not support SELinux chcon - Forcing with .autorelabel
   copy:
     dest: /guests/{{ item.name }}/.autorelabel
@@ -265,9 +282,9 @@
     - hypervisor_setup
 
 - name: Generate SSH keys for admin user
-  shell: ssh-keygen -t rsa -f /guests/{{ item.name }}/admin/.ssh/id_rsa -q -N ""
+  shell: ssh-keygen -t ecdsa -f /guests/{{ item.name }}/admin/.ssh/id_ecdsa -q -N "" -C {{ item.name }}
   args:
-    creates: /guests/{{ item.name }}/admin/.ssh/id_rsa
+    creates: /guests/{{ item.name }}/admin/.ssh/id_ecdsa
   with_items:
     - "{{ guests }}"
   tags:
@@ -275,7 +292,7 @@
 
 - name: Set ownership on SSH keys (private key)
   file:
-    path: /guests/{{ item.name }}/admin/.ssh/id_rsa
+    path: /guests/{{ item.name }}/admin/.ssh/id_ecdsa
     owner: admin
     group: admin
     setype: ssh_home_t
@@ -286,7 +303,7 @@
 
 - name: Set ownership on SSH keys (public key)
   file:
-    path: /guests/{{ item.name }}/admin/.ssh/id_rsa.pub
+    path: /guests/{{ item.name }}/admin/.ssh/id_ecdsa.pub
     owner: admin
     group: admin
     setype: ssh_home_t
@@ -295,19 +312,10 @@
   tags:
     - hypervisor_setup
 
-- name: Create directory for guest SSH public keys (hypervisor)
-  file:
-    path: /guests/.ssh
-    state: directory
-    mode: 0700
-  tags:
-    - hypervisor_setup
-
-
 - name: Copy SSH public keys to hypervisor
   copy:
-    src: /guests/{{ item.name }}/admin/.ssh/id_rsa.pub
-    dest: /guests/.ssh/{{ item.name }}.id_rsa.pub
+    src: /guests/{{ item.name }}/admin/.ssh/id_ecdsa.pub
+    dest: /guests/.ssh/{{ item.name }}.id_ecdsa.pub
   with_items:
     - "{{ guests }}"
   tags:
@@ -334,6 +342,27 @@
   tags:
     - hypervisor_setup
 
+- name: Create known_hosts file for each guest
+  assemble:
+    src: /guests/.ssh-host-keys
+    dest: /guests/{{ item.name }}/admin/.ssh/known_hosts
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Set ownership on SSH keys (known_hosts)
+  file:
+    path: /guests/{{ item.name }}/admin/.ssh/known_hosts
+    owner: admin
+    group: admin
+    setype: ssh_home_t
+    mode: 0644
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
 - name: Run restore context to reload SELinux
   shell: "restorecon -Rv /guests/{{ item.name }}/admin/.ssh"
   with_items:
@@ -342,20 +371,6 @@
     - hypervisor_setup
 
 - name: un-Mount home filesystem for all guests to the hypervisor
-  shell: guestunmount /guests/{{ item.name }}
-  with_items:
-    - "{{ guests }}"
-  tags:
-    - hypervisor_setup
-
-- name: Mount var filesystem for all guests to the hypervisor
-  shell: guestmount -m /dev/VolGroup/LogVol03:/:defaults -d {{ item.name }} /guests/{{ item.name }}
-  with_items:
-    - "{{ guests }}"
-  tags:
-    - hypervisor_setup
-
-- name: un-Mount var filesystem for all guests to the hypervisor
   shell: guestunmount /guests/{{ item.name }}
   with_items:
     - "{{ guests }}"
