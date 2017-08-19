@@ -17,6 +17,8 @@
     - gitweb
     - git-daemon
     - httpd
+    - libguestfs
+    - libguestfs-tools
     - libselinux-python
     - libvirt-client
     - libvirt-daemon

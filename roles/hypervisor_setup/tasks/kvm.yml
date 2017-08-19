@@ -193,3 +193,102 @@
     - "{{ guests }}"
   tags:
     - hypervisor_setup
+
+- name: Create directory for all guestmount(s)
+  file:
+    path: /guests
+    state: directory
+    mode: 0755
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for guestmount FUSE filesystems
+  file:
+    path: /guests/{{ item.name }}
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Mount root filesystem for all guests to the hypervisor
+  shell: guestmount -m /dev/VolGroup/LogVol06:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Set hostname of each of the systems
+  lineinfile:
+    path: /guests/{{ item.name }}/etc/hostname
+    regexp: 'localhost.localdomain'
+    line: "{{ item.name }}"
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: un-Mount root filesystem for all guests to the hypervisor
+  shell: guestunmount /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Mount home filesystem for all guests to the hypervisor
+  shell: guestmount -m /dev/VolGroup/LogVol02:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: un-Mount home filesystem for all guests to the hypervisor
+  shell: guestunmount /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Mount var filesystem for all guests to the hypervisor
+  shell: guestmount -m /dev/VolGroup/LogVol03:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: un-Mount var filesystem for all guests to the hypervisor
+  shell: guestunmount /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Query KVM for environment/VM details
+  virt:
+    command: info
+  register: virt_info
+  tags:
+    - hypervisor_setup
+
+- name: Ensure all created Virtual Machines are running
+  virt:
+    name: "{{ item.name }}"
+    command: start
+  when: virt_info[item.name]['state'] != 'running'
+  with_items:
+      - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Wait for all Virtual Machines to enter running state
+  virt:
+    command: info
+  register: virt_info
+  until: virt_info[item.name]['state'] == 'running'
+  retries: 1500
+  delay: 10
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
