@@ -36,6 +36,7 @@
     - samba
     - virt-install
     - virt-manager
+    - yum-utils
   tags:
     - hypervisor_setup
 
@@ -87,6 +88,11 @@
     src: "{{ share_directory }}/{{ ansible_tower_bundle_file }}"
     dest: "{{ share_directory }}/ansible"
     extra_opts: "--strip-components=1"
+
+#####
+# RHEL
+
+- include: rhel.yml
 
 #####
 # Git
