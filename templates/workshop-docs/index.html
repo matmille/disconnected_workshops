@@ -1,0 +1,2075 @@
+<html>
+<body>
+<h1>Ansible Tower Workshop</h1>
+<h3>Today's Agenda</h3>
+<ol>
+<li> Arrivals
+<li> Introductions / Agenda
+<li> Presentation
+<li> <a href="#Setup">Setup</a>
+<li> <a href="#Section 1: Ad-hoc commands">Exercise 1.0 - Running Ad-hoc commands</a>
+<li> <a href="#Exercise 1.1">Exercise 1.1 - Writing Your First playbook</a>
+<li> <a href="#Exercise 1.2">Exercise 1.2 - Running Your Playbook</a>
+<li> <a href="#Exercise 1.3">Exercise 1.3 - Using Variables, Loops, and Handlers</a>
+<li> <a href="#Exercise 1.4">Exercise 1.4 - Running the apache-basic-playbook</a>
+<li> <a href="#Exercise 1.5">Exercise 1.5 - Roles: Making your playbooks reusable</a>
+<li> <a href="#Exercise 2.0">Exercise 2.0 - Installing Ansible Tower</a>
+<li> <a href="#Exercise 2.1">Exercise 2.1 - Configuring Ansible Tower</a>
+<li> <a href="#Exercise 2.2">Exercise 2.2 - Creating and Running a Job Template</a>
+<li> <a href="#Exercise 3.0">Exercise 3.0 - Using Ansible to Implement Security</a>
+<li> Wrapup
+</ol>
+
+<h3>Before We Get Started</h3>
+
+<h4>Overview</h4>
+
+<p>Today is meant for anyone who has any exposure to Ansible, whether you have used it or not. We are going to start with a short overview (yes, slideware) and then we'll get into the lab as soon as possible. That is where we will spend most of our time.
+</p>
+
+<h4>Your Responsibilities</h4>
+<ol>
+<li> Have a discussion. This will be boring if it's just us up here talking for over 4 hours.
+<li> Participate. We are going to cut you loose with Ansible here in just a little while. Have questions. Have opinions.
+</ol>
+
+<h4>Conventions Used in This Document</h4>
+	
+<table>
+<tr>
+<td>
+<img width=50 height=50 src="lightbulb.png">
+</td>
+<td>
+<p>
+<i>Whenever you see a section like this, please pay close attention. We are leading you through a process.</i>
+</p><p>
+<b>Step 1:</b> Run this command to do something or other
+</p>
+</td>
+</tr>
+</table>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m setup
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>
+<b>Step 2:</b> Edit this file in this specific way
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: This is a play within a playbook
+become: yes
+vars:
+httpd_packages:
+- httpd
+- mod_wsgi
+
+</pre>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+<img width=50 height=50 src="exclamation.png">
+</td><td>
+<p>Do not cut and paste text from this document. We really want you to learn ansible during this workshop, and part of that experience is typing out YAML and understanding it's syntax, spacing, and alignments.
+</p>
+</td>
+</tr>
+</table>
+
+<h4>Workshop Deployment</h4>
+
+<p>
+Here is the link to deploy this workshop in KVM via Ansible.
+</p>
+
+
+<hr>
+
+<img width=50% height=auto src="arch.png">
+
+<h2><a name="Setup">Setup</a></h2>
+
+<ul>
+<li>Today's workshop infrastructure is being run on Red Hat Enterprise Linux using Smart Virtualization (powered by KVM)
+<li>Each student will have two instances to use.
+</ul>
+
+<h3>Tower</h3>
+
+<h3>Node 1</h3>
+
+<h4>Workshop Infrastructure</h4>
+
+<p>
+Each student's personal lab is equipped with the following:
+</p>
+
+<ul>
+<li> Control node (to run ansible plays and install Ansible Tower).
+<li> Endpoint nodes (to execute ansible playbooks upon).
+<li> All three of the afore mentioned nodes are running Red Hat Enterprise Linux 7
+<li> Ansible Core
+<li> Ansible Tower
+</ul>
+
+<h5><i>Setup Your Environment</i></h5>
+
+<p>Before we can begin doing super-cool automations and such, we've got to get a few basics out of the way. Namely... ssh access to your virtual nodes.</p>
+
+<h4>Testing your environment</h4>
+
+<p>Log into your Tower instance via SSH</p>
+
+<h5>Tower</h5>
+
+<table>
+<tr>
+<td>
+<img width=50 height=50 src="exclamation.png">
+</td>
+<td>
+Be sure you can log in to your virtual instances. If you can't log in start shouting, loudly, and waving your hands! 
+</td>
+</tr>
+</table>
+
+<h4>End Result</h4>
+
+<p>
+At this point, everyone should have logged into each of your 2 nodes. If you haven't, let us know so we can get you fixed up.
+</p>
+
+<hr>
+
+<h2><a name="Section 1: Ad-hoc commands">Section 1: Ad-hoc commands</a></h2>
+
+<p>
+For our first exercise, we are going to run some ad-hoc commands to help you get a feel for how Ansible works. Ansible Ad-Hoc commands enable you to perform tasks on remote nodes without having to write a playbook. y are very useful when you simply need to do one or two things quickly and often, to many remote nodes.
+</p>
+
+<h3>Step 0:</h3>
+
+<p>
+Define your inventory. Inventories are crucial to Ansible as they define remote machines on which you wish to run commands or your playbook(s). Use <b>vi</b> or <b>vim</b> to create a file called hosts. n, add the appropriate definitions for the node that will function as a web node.
+</p>
+
+<h3>Step 1:</h3>
+
+<p>Let's start with something really basic - pinging a host.  ping module makes sure our web hosts are responsive.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m ping
+
+</pre>
+</td>
+</tr>
+</table>
+
+
+<h3>Step 2:</h3>
+
+<p>Now let's see how we can run a good ol' fashioned Linux command and format the output using the command module.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m command -a "uptime" -o
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3> Step 3: </h3>
+
+<p>
+Take a look at your web node's configuration.  setup module displays ansible facts (and a lot of them) about an endpoint.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m setup
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3> Step 4: </h3>
+
+<p>
+Now, let's install Apache using the yum module.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m yum -a "name=httpd state=present" -b
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3> Step 5: </h3>
+
+<p>
+OK, Apache is installed now so let's start it up using the service module.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m service -a "name=httpd state=started" -b
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3> Step 6: </h3>
+
+<p>
+Finally, let's clean up after ourselves. First, stop the httpd service.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m service -a "name=httpd state=stopped" -b
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3> Step 7: </h3>
+
+<p>
+Next, remove the Apache package.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m yum -a "name=httpd state=absent" -b
+
+</pre>
+</td>
+</tr>
+</table>
+
+<table cellpadding=10 width=100% border=1>
+<tr>
+<td>
+<table cellpadding=10>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>
+<td> 
+Like many Linux commands, ansible allows for long-form options as well as short-form. For example:
+</td>
+</tr>
+</table>
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web --module-name ping
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>is the same as running</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible web -m ping
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>We are going to be using the short-form options throughout this workshop</p>
+</td>
+</tr>
+</table>
+
+<hr>
+
+<h2><a name="Exercise 1.1">Exercise 1.1 - Writing Your First playbook</a></h2>
+
+<p>
+Now that you've gotten a sense of how ansible works, we are going to write our first ansible <b>playbook</b>.  playbook is where you can take some of those ad-hoc commands you just ran and put them into a repeatable set of <b>plays</b> and <b>tasks</b>.
+</p>
+
+<p>
+A playbook can have multiple plays and a play can have one or multiple tasks.  goal of a <b>play</b> is to map a group of hosts. The goal of a <b>task</b> is to implement modules against those hosts.
+</p>
+
+<p>
+For our first playbook, we are only going to write one play and two tasks.
+</p>
+
+<h3>
+Section 1: Creating a Directory Structure and Files for your Playbook
+</h3>
+
+<p>
+re is a best practice on the preferred directory structures for playbooks. We strongly encourage you to read and understand these practices as you develop your Ansible ninja skills. That said, our playbook today is very basic and creating a complex structure will just confuse things.
+</p>
+
+<p>
+Instead, we are going to create a very simple directory structure for our playbook, and add just a couple of files to it.
+</p>
+
+<p>
+<b>Step 1:</b> Create a directory called <b>apache_basic</b> in your home directory and change directories into it
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+mkdir ~/apache_basic
+cd ~/apache_basic
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>
+<b>Step 2:</b> Use vi or vim to open a file called install_apache.yml
+</p>
+
+<h3>
+Section 2: Defining Your Play
+</h3>
+
+<p>
+Now that you are editing <b>install_apache.yml</b>, let's begin by defining the play and then understanding what each line accomplishes
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: Install the apache web service
+become: yes
+
+</pre>
+</td>
+</tr>
+</table>
+
+<ul>
+<li> <b>---</b> Defines the beginning of YAML
+<li> <b>hosts: web</b> Defines the host group in your inventory on which this play will run against
+<li> <b>name: Install the apache web service</b> This describes our play
+<li> <b>become: yes</b> Enables user privilege escalation.  default is sudo, but su, pbrun, and several others are also supported.
+</ul>
+
+<h3>Section 3: Adding Tasks to Your Play</h3>
+
+<p>
+Now that we've defined your play, let's add some tasks to get some things done. Align (vertically) the t in task with the b become.
+Yes, it does actually matter. In fact, you should make sure all of your playbook statements are aligned in the way shown here.
+If you want to see the entire playbook for reference, skip to the bottom of this exercise.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+tasks:
+- name: install apache
+yum:
+name: httpd
+state: present
+
+- name: start httpd
+service:
+name: httpd
+state: started
+
+</pre>
+</td>
+</tr>
+</table>
+
+<ul>
+<li><b>tasks:</b> This denotes that one or more tasks are about to be defined
+<li><b>- name:</b> Each task requires a name which will print to standard output when you run your playbook. refore, give your tasks a name that is short, sweet, and to the point
+</ul>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+yum:
+name: httpd
+state: present
+
+</pre>
+</td>
+</tr>
+</table>
+
+<ul>
+<li>se three lines are calling the Ansible module <b>yum</b> to install httpd.
+</ul>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+service:
+name: httpd
+state: started
+
+</pre>
+</td>
+</tr>
+</table>
+
+<ul>
+<li>  next few lines are using the ansible module <b>service</b> to start the httpd service. The service module is the preferred way of controlling services on remote hosts.
+</ul>
+
+<h3>Section 4: Saving your Playbook</h3>
+
+<p>
+Now that you've completed writing your playbook, it would be a shame not to keep it.
+</p>
+
+<p>
+Use the <b>write/quit</b> method in <b>vi</b> or <b>vim</b> to save your playbook, i.e. <b>Esc :wq!</b>
+</p>
+
+<p>
+And that should do it. You should now have a fully written playbook called <b>install_apache.yml.</b> You are ready to automate!
+</p>
+
+<table>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>
+<td>
+Ansible (well, YAML really) can be a bit particular about formatting especially around indentation/spacing. Your completed playbook should look like this. Take note of the spacing and alignment.
+</td>
+</tr>
+</table>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: Install the apache web service
+become: yes
+
+tasks:
+- name: install apache
+yum:
+name: httpd
+state: present
+
+- name: start httpd
+service:
+name: httpd
+state: started
+
+</pre>
+</td>
+</tr>
+</table>
+
+<hr>
+
+<h2><a name="Exercise 1.2">Exercise 1.2 - Running Your Playbook</a></h2>
+
+<h3>Section 1: Running the Playbook</h3>
+
+<p>
+We are now going to run you're brand spankin' new playbook on your two web nodes. To do this, you are going to use the ansible-playbook command.
+</p>
+
+<h4>Step 1:</h4>
+
+<p>
+From your playbook directory ( <b>~/apache_basic</b> ), run your playbook.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts install_apache.yml
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>
+However, before you go ahead and run that command, lets take a few moments to understand the options.
+</p>
+
+<ul>
+<li><b>--private-key</b> This option ask for the private ssh key to connect to the remote machine.
+<li><b>-i</b> This option allows you to specify the inventory file you wish to use.
+<li><b>-v</b> Altough not used here, this increases verbosity. Try running your playbook a second time using <b>-v</b> or <b>-vv</b> to increase the verbosity
+<li><b>--syntax-check</b> If you run into any issues with your playbook running properly; you know, from that copy/pasting that you didn't do because we said "don't do that"; you could use this option to help find those issues like so...
+</ul>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts install_apache.yml --syntax-check
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>
+OK, go ahead and run your playbook as specified in <b>Step 1</b>
+</p>
+
+<p>
+In standard output, you should see something that looks very similar to the following:
+</p>
+
+<p>
+<img src="ansible_output.png"><br>
+<i>Figure 1: apache_basic playbook stdout</i>
+</p>
+
+<p>
+Notice that the play and each task is named so that you can see what is being done and to which node it is being done to. You also may notice a task in there that you didn't write; <cough> <b>setup</b> <cough>. This is because the <b>setup</b> module runs by default. To turn if off, you can specify <b>gather_facts: false</b> in your play definition like this:
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: Install the apache web service
+become: yes
+gather_facts: false
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 2:</h4>
+
+<p>Remove Apache</p>
+
+<p>
+OK, for the next several minutes or as much time as we can afford, we want to to experiment a little. We would like you to reverse what you've done, i.e. stop and uninstall apache on your web nodes. So, go ahead and edit your playbook and then when your finished, rerun it as specified in <b>Step 1</b>. For this exercise we aren't going to show you line by line, but we will give you a few hints.
+</p>
+
+<ul>
+<li> If your first task in the playbook was to install httpd and the second task was to start the service, which order do you think those tasks should be in now?
+<li> If <b>started</b> makes sure a service is started, then what option ensures it is stopped?
+<li> If <b>present</b> makes sure a package is installed, then what option ensures it is removed? Er... starts with an <b>ab</b>, ends with a <b>sent</b>
+</ul>
+
+<hr>
+
+<h2><a name="Exercise 1.3">Exercise 1.3 - Using Variables, Loops, and Handlers</a></h2>
+
+<p>
+Previous exercises showed you the basics of Ansible Core. In the next few exercises, we are going to teach some more advanced ansible skills that will add flexibility and power to your playbooks.
+</p>
+
+<p>
+Ansible exists to make tasks simple and repeatable. We also know that not all systems are exactly alike and often require some slight change to the way an Ansible playbook is run. Enter variables.
+</p>
+
+<p>
+Variables are how we deal with differences between your systems, allowing you to account for a change in port, IP address or directory.
+</p>
+
+<p>
+Loops enable us to repeat the same task over and over again. For example, lets say you want to install 10 packages. By using an ansible loop, you can do that in a single task.
+</p>
+
+<p>
+Handlers are the way in which we restart services. Did you just deploy a new config file, install a new package? If so, you may need to restart a service for those changes to take effect. We do that with a handler.
+</p>
+
+<h3> Section 1: Running the Playbook</h3>
+
+<p>
+To begin, we are going to create a new playbook, but it should look very familiar to the one you created in exercise 1.2
+</p>
+
+<p>
+We are now going to run you're brand spankin' new playbook on your two web nodes. To do this, you are going to use the <b>ansible-playbook</b> command.
+</p>
+
+
+<h4>Step 1:</h4>
+
+<p>
+Navigate to your home directory create a new project and playbook.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cd
+mkdir apache-basic-playbook
+cd apache-basic-playbook
+vim site.yml
+
+</pre>
+</td>
+</tr>
+</table>
+<h4>Step 2:</h4>
+
+<p>
+Add a play definition and some variables to your playbook. se include addtional packages your playbook will install on your web servers, plus some web server specific configurations.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: This is a play within a playbook
+become: yes
+vars:
+httpd_packages:
+- httpd
+- mod_wsgi
+apache_test_message: This is a test message
+apache_max_keep_alive_requests: 115
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 3:</h4>
+
+<p>
+Add a new task called <b>install httpd packages.</b>
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+tasks:
+- name: install httpd packages
+yum:
+name: "{{ item }}"
+state: present
+with_items: "{{ httpd_packages }}"
+notify: restart apache service
+
+</pre>
+</td>
+</tr>
+</table>
+<p></p>
+<table>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>
+<td>
+<p><b>What the Helsinki is happening here!?</b></p>
+<ul>
+<li><b>vars:</b> You've told Ansible the next thing it sees will be a variable name
+<li><b>httpd_packages</b> You are defining a list-type variable called httpd_packages. What follows is a list of those packages
+<li><b>{{ item }}</b> You are telling Ansible that this will expand into a list item like <b>httpd</b> and <b>mod_wsgi.</b>
+<li><b>with_items: "{{ httpd_packages }}</b> This is your loop which is instructing Ansible to perform this task on every <b>item</b> in <b>httpd_packages</b>
+<li><b>notify: restart apache service</b> This statement is a <b>handler</b>, so we'll come back to it in Section 3.
+</ul>
+</td>
+</tr>
+</table>
+
+<h3>Section 2: Deploying Files and Starting a Service</h3>
+
+<p>
+When you need to do pretty much anything with files and directories, use one of the Ansible Files modules. In this case, we'll leverage the <b>file</b> and <b>template modules.</b>
+</p>
+
+<p>
+After that, you will define a task to start the start the apache service.
+</p>
+
+<h4>Step 1:</h4>
+
+<p>
+Create a templates directory in your project directory and download two files.
+</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+mkdir templates
+cd templates
+curl -O http://ansible-workshop.redhatgov.io/workshop-files/httpd.conf.j2
+curl -O http://ansible-workshop.redhatgov.io/workshop-files/index.html.j2
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 2:</h4>
+
+<p>Add some file tasks and a service task to your playbook.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+- name: create site-enabled directory
+file:
+name: /etc/httpd/conf/sites-enabled
+state: directory
+
+- name: copy httpd.conf
+template:
+src: templates/httpd.conf.j2
+dest: /etc/httpd/conf/httpd.conf
+notify: restart apache service
+
+- name: copy index.html
+template:
+src: templates/index.html.j2
+dest: /var/www/html/index.html
+
+- name: start httpd
+service:
+name: httpd
+state: started
+enabled: yes
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p></p>
+
+<table>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>
+<td>	
+<p><b>So... what did I just write?</b></p>
+<ul>
+<li><b>file:</b> This module is used to create, modify, delete files, directories, and symlinks.
+<li><b>template:</b> This module specifies that a jinja2 template is being used and deployed. <b>template</b> is part of the <b>Files</b> module family and we encourage you to check out all of the other file-management modules.
+<li><b>jinja-who?</b> - Not to be confused with 2013's blockbuster "Ninja II - Shadow of a Tear", <b>jinja2</b> is used in Ansible to transform data inside a template expression, i.e. filters.
+<li><b>service</b> -  Service module starts/stops/restarts services.
+</ul>
+</td>
+</tr>
+</table>
+
+
+<h4>Section 3: Defining and Using Handlers</h4>
+
+<p>re are any number of reasons we often need to restart a service/process including the deployment of a configuration file, installing a new package, etc. There are really two parts to this Section; adding a handler to the playbook and calling the handler after the a task. We will start with the former.</p>
+
+<h5>Step 1:</h5>
+
+<p>Define a handler.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+handlers:
+- name: restart apache service
+service:
+name: httpd
+state: restarted
+enabled: yes
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p></p>
+
+<table>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>
+<td>
+<p><b>You can't have a former if you don't mention the latter</b></p>
+<ul>
+<li><b>handler:</b> This is telling the <b>play</b> that the <b>tasks:</b> are over, and now we are defining <b>handlers:</b>. Everything below that looks the same as any other task, i.e. you give it a name, a module, and the options for that module. This is the definition of a handler.
+<li><b>notify: restart apache service</b> ... and here is your latter. Finally!  <b>notify</b> statement is the invocation of a handler by name. Quite the reveal, we know. You already noticed that you've added a <b>notify</b> statement to the <b>copy httpd.conf</b> task, now you know why.
+</td>
+</tr>
+</table>
+
+<h4>Section 4: Review</h4>
+
+<p>Your new, improved playbook is done! But don't run it just yet, we'll do that in our next exercise. For now, let's take a second look to make sure everything looks the way you intended. If not, now is the time for us to fix it up.  figure below shows line counts and spacing.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: This is a play within a playbook
+become: yes
+vars:
+httpd_packages:
+- httpd
+- mod_wsgi
+apache_test_message: This is a test message
+apache_max_keep_alive_requests: 115
+
+tasks:
+- name: httpd packages are present
+yum:
+name: "{{ item }}"
+state: present
+with_items: "{{ httpd_packages }}"
+notify: restart apache service
+
+- name: site-enabled directory is present
+file:
+name: /etc/httpd/conf/sites-enabled
+state: directory
+
+- name: latest httpd.conf is present
+template:
+src: templates/httpd.conf.j2
+dest: /etc/httpd/conf/httpd.conf
+notify: restart apache service
+
+- name: latest index.html is present
+template:
+src: templates/index.html.j2
+dest: /var/www/html/index.html
+
+- name: httpd is started and enabled
+service:
+name: httpd
+state: started
+enabled: yes
+
+handlers:
+- name: restart apache service
+service:
+name: httpd
+state: restarted
+
+</pre>
+</td>
+</tr>
+</table>
+
+<hr>
+
+<h2><a name="Exercise 1.4">Exercise 1.4 - Running the apache-basic-playbook</a></h2>
+
+
+ongratulations! You just wrote a playbook that incorporates some key Ansible concepts that you use in most if not all of your future playbooks. Before you get too excited though, we should probably make sure it actually runs.
+
+So, lets do that now.
+Section 1 - Running your new apache playbook
+Step 1:
+
+Make sure you are in the right directory and create a host file.
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cd ~/apache-basic-playbook
+
+</pre>
+</td>
+</tr>
+</table>
+
+Since you already did the work of creating a host file in Lession 1.0, feel free to re-use it.
+Step 2:
+
+Run your playbook
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts site.yml
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3>Section 2: Review</h3>
+
+<p>If successful, you should see standard output that looks very similar to the following. If not, just let us know. We'll help get things fixed up.</p>
+
+<p>
+<img src="ansible-basic-playbook.png"><br>
+<i>Figure 1: apache-basic-playbook stdout</i>
+</p>
+
+<hr>
+
+<h2><a name="Exercise 1.5">Exercise 1.5 - Roles: Making your playbooks reusable</a></h2>
+
+<p>
+While it is possible to write a playbook in one file as we've done throughout this workshop, eventually you'll want to reuse files and start to organize things.
+</p>
+
+<p>
+Ansible Roles is the way we do this. When you create a role, you deconstruct your playbook into parts and those parts sit in a directory structure. 
+</p>
+
+<p>
+For this exercise, you are going to take the playbook you just wrote and refactor it into a role. In addition, you'll learn to use Ansible Galaxy.
+</p>
+
+<p>
+Let's begin with seeing how your apache-basic-playbook will break down into a role.
+</p>
+
+<p>
+<img src="ansible-breakdown.png">
+</p>
+
+<p>
+Fortunately, you don't have to create all of these directories and files by hand. That's where Ansible Galaxy comes in.
+</p>
+
+<h3>Section 1: Using Ansible Galaxy to initialize a new role</h3>
+
+<p>Ansible Galaxy is a free site for finding, downloading, and sharing roles. It's also pretty handy for creating them which is what we are about to do here.
+</p>
+
+<h4>Step 1:</h4>
+
+<p>Navigate to your <b>apache-basic-playbook</b> project.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cd ~/apache-basic-playbook
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4> Step 2:</h4>
+
+<p>Create a directory called <b>roles</b> and <b>cd</b> into it.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-galaxy init apache-simple
+mkdir roles
+cd roles
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4> Step 3:</h4>
+
+<p>Use the <b>ansible-galaxy</b> command to initialize a new role called <b>apache-simple.</b></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+ansible-galaxy init apache-simple
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>Take a look around the structure you just created. It should look a lot like Figure 1 above. However, we need to complete one more step before moving onto section 2. It is Ansible best practice to clean out role directories and files you won't be using. For this role, we won't be using anything from <b>files, tests</b>.</p>
+
+<h4> Step 4:</h4>
+
+Remove the <b>files</b> and <b>tests</b> directories
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+cd ~/apache-basic-playbook/roles/apache-simple/
+rm -rf files tests
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3>Section 2: Breaking Your <b>site.yml</b> Playbook into the Newly Created <b>apache-simple</b> Role</h3>
+
+<p>In this section, we will separate out the major parts of your playbook including <b>vars:, tasks:, template:</b>, and <b>handlers:</b>.'</p>
+
+<h4>Step 1:</h4>
+
+Make a backup copy of site.yml, then create a new site.yml.
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cd ~/apache-basic-playbook
+mv site.yml site.yml.bkup
+vim site.yml
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 2:</h4>
+
+<p>Add the play definition and the invocation of a single role.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+name: This is my role-based playbook
+become: yes
+
+roles:
+- apache-simple
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 3:</h4>
+
+<p>Add some default variables to your role in <b>roles/apache-simple/defaults/main.yml</b>.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+# defaults file for apache-simple
+apache_test_message: This is a test message
+apache_max_keep_alive_requests: 115
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 4:</h4>
+
+<p>Add some role-specific variables to your role in <b>roles/apache-simple/vars/main.yml.</b></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+# vars file for apache-simple
+httpd_packages:
+- httpd
+- mod_wsgi
+
+</pre>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>	
+<td>
+<p><b>Hey, wait just a minute there buster.. did you just have us put variables in two seperate places?</b></p>
+
+<p>Yes... we did. Variables can live in quite a few places. Just to name a few:</p>
+
+<ul>
+<li>vars directory
+<li>defaults directory
+<li>group_vars directory
+<li>In the playbook under the <b>vars:</b> section
+<li>In any file which can be specified on the command line using the <b>--extra_vars</b> option
+<li>On a boat, in a moat, with a goat <i>(disclaimer: this is a complete lie)</i>
+
+</ul>
+
+<p>Bottom line, you need to read up on variable precedence to understand both where to define variables and which locations take precedence. In this exercise, we are using role defaults to define a couple of variables and these are the most malleable. After that, we defined some variables in <b>/vars</b> which have a higher precedence than defaults and can't be overridden as a default variable.</p>
+</td>
+</tr>
+</table>
+
+<h4>Step 5:</h4>
+
+<p>Create your role handler in <b>roles/apache-simple/handlers/main.yml.</b></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+# handlers file for apache-simple
+- name: restart apache service
+service:
+name: httpd
+state: restarted
+enabled: yes
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 6:</h4>
+
+<p>Add tasks to your role in <b>roles/apache-simple/tasks/main.yml.</b></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+# tasks file for apache-simple
+- name: install httpd packages
+yum:
+name: "{{ item }}"
+state: present
+with_items: "{{ httpd_packages }}"
+notify: restart apache service
+
+- name: create site-enabled directory
+file:
+name: /etc/httpd/conf/sites-enabled
+state: directory
+
+- name: copy httpd.conf
+template:
+src: templates/httpd.conf.j2
+dest: /etc/httpd/conf/httpd.conf
+notify: restart apache service
+
+- name: copy index.html
+template:
+src: templates/index.html.j2
+dest: /var/www/html/index.html
+
+- name: start httpd
+service:
+name: httpd
+state: started
+enabled: yes
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 7:</h4>
+
+<p>Download a couple of templates into <b>roles/apache-simple/templates/</b>. And right after that, let's clean up from exercise 2.1 by removing the old templates directory.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+mkdir -p ~/apache-basic-playbook/roles/apache-simple/templates/
+cd ~/apache-basic-playbook/roles/apache-simple/templates/
+curl -O http://ansible-workshop.redhatgov.io/workshop-files/httpd.conf.j2
+curl -O http://ansible-workshop.redhatgov.io/workshop-files/index.html.j2
+rm -rf ~/apache-basic-playbook/templates/
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3>Section 3: Running your new role-based playbook</h3>
+
+<p>Now that you've successfully separated your original playbook into a role, let's run it and see how it works.</p>
+
+<h4>Step 1:</h4>
+
+<p>Run the playbook.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts site.yml
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>If successful, your standard output should look similar to the figure below.</p>
+
+<p><img src="newrole.png" width=50% height=auto></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-basic-playbook role-based stdout
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3>Section 4: Review</h3>
+
+<p>You should now have a completed playbook, <b>site.yml</b> with a single role called <b>apache-simple.</b>  advantage of structuring your playbook into roles is that you can now add new roles to the playbook using Ansible Galaxy or simply writing your own. In addition, roles simplify changes to variables, tasks, templates, etc.</p>
+
+<hr>
+
+<h2><a name="Exercise 2.0">Exercise 2.0 - Installing Ansible Tower</a></h2>
+
+<p>In this exercise, we are going to get Ansible Tower installed on your control node
+
+<h3>Installing Ansible Tower</h3>
+
+<h4>Step 1:</h4>
+
+<p>Change directories to /tmp</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cd /tmp
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 2:</h4>
+
+<p>Download the latest Ansible Tower package</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+curl -O http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>Step 3:</p>
+
+<p>Untar and unzip the package file</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+tar xvfz /tmp/ansible-tower-setup-latest.tar.gz
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 4:</h4>
+
+<p>Change directories into the ansible tower package</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cd /tmp/ansible-tower-setup-*
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 5:</h4>
+
+<p>Using an editor of your choice, open the inventory file</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+vi inventory
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 6:</h4>
+
+<p>Fill a few variables out in an inventory file: <b>admin_password, pg_password, rabbitmq_password</b></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+[tower]
+localhost ansible_connection=local
+
+[database]
+
+[all:vars]
+admin_password='ansibleWS'
+
+pg_host=''
+pg_port=''
+
+pg_database='awx'
+pg_username='awx'
+pg_password='ansibleWS'
+
+rabbitmq_port=5672
+rabbitmq_vhost=tower
+rabbitmq_username=tower
+rabbitmq_password='ansibleWS'
+rabbitmq_cookie=cookiemonster
+
+# Needs to be true for fqdns and ip addresses
+rabbitmq_use_long_name=false
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 7:</h4>
+
+<b>Run the Ansible Tower setup script</b>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+sudo ./setup.sh
+
+</pre>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+<img src="exclamation_blue.png">
+</td>
+<td>
+<p>Step 7 will take approx. 10-15 minutes to complete. This may be a good time to take a break.</p>
+</td>
+</tr>
+</table>
+
+<h4>End Result</h4>
+
+<p>At this point, your Ansible Tower installation should be complete. You can access Tower at:</p>
+
+<p>https://workshopname.tower.0.redhatgov.io</p>
+
+<h4>Ensuring Installation Success</h4>
+
+<p>You know you were successful if you are able to browse to your Ansible Tower's url (control node's IP address) and get something like this</p>
+
+<p><img src="tower-login.png" width=50% height=auto><br>
+<i>Figure 2: Ansible Tower Login Screen</i></p>
+
+<hr>
+<h2><a name="Exercise 2.1">Exercise 2.1 - Configuring Ansible Tower</a></h2>
+<p>In this exercise, we are going to configure Tower so that we can run a playbook.</p>
+
+<h3>Configuring Ansible Tower</h3>
+
+<p>re are a number of contructs in the Ansible Tower UI that enable multi-tenancy, notifications, scheduling, etc. However, we are only going to focus on a few of the key contructs that are required for this workshop today.</p>
+
+<ul>
+<li>Credentials
+<li>Projects
+<li>Inventory
+<li>Job Template
+</ul>
+
+<h3>Logging into Tower and Installing the License Key</h3>
+
+<h4>Step 1:</h4>
+
+<p>To log in, use the username <b>admin</b> and and the password <b>ansibleWS.</b></p>
+
+<p><img src="tower-login.png" width=50% height=auto><br>
+<i>Figure 3: Ansible Tower Login Screen</i></p>
+
+<p>As soon as you login, you will prompted to request a license or browse for an existing license file</p>
+
+<p><img src="lic.png" width=50% height=auto><br>
+<p><i>Figure 4: Uploading a License</i></p>
+
+<h4>Step 2:</h4>
+
+<p>At the commandline in your Tower instance download the encrypted license file via the curl command.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+curl -O https://s3.amazonaws.com/ansible-tower-workshop-license/license
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>n Decrypt the license file via Ansible Vault. <b>The instructor should provide the password</b></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+ansible-vault decrypt license
+...
+
+Vault password:
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>Now use curl to POST the license to the Tower API endpoint. Please edit this command to the use the <b>workshop_prefix</b> for your workshop. This command exports your workshop prefix so that the next command can use that data in the curl command.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+export WORKSHOP_PREFIX=" "
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>Now send the <b>license</b> to Tower via the API.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+curl -k https://$WORKSHOP_PREFIX.tower.0.redhatgov.io/api/v1/config/ \
+-H 'Content-Type: application/json' \
+-X POST \
+--data @license \
+--user admin:ansibleWS
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h3>Creating a Credential</h3>
+
+<p>Credentials are utilized by Tower for authentication when launching jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.</p>
+
+<p>re are many types of credentials including machine, network, and various cloud providers. In this workshop, we are using a <b>machine</b> credential.</p>
+
+<h4>Step 1:</h4>
+
+<p>Select the gear icon</p>
+
+<h4>Step 2:</h4>
+
+<p>Select CREDENTIALS</p>
+
+<h4>Step 3:</h4>
+
+<p>Click on ADD </p>
+
+<h4>Step 4:</h4>
+
+<p>Complete the form using the following entries, by printing out your private SSH key to place into Tower. When you paste the key in, in the <b>PRIVATE KEY</b> field, make sure to include the <b>-----BEGIN RSA PRIVATE KEY-----</b> and <b>-----BEGIN RSA PRIVATE KEY-----</b> lines.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+cat ~/.ssh/workshop-tower
+
+</pre>
+</td>
+</tr>
+</table>
+<p></p>
+<table border=1>
+<tr><td>NAME</td><td>Ansible Workshop Credential</td></tr>
+<tr><td>DESCRIPTION</td><td>Machine credential for run job templates during workshop</td></tr>
+<tr><td>ORGANIZATION</td><td>Default</td></tr>
+<tr><td>TYPE</td><td>Machine</td></tr>
+<tr><td>USERNAME</td><td>ec2-user</td></tr>
+<tr><td>PRIVILEGE ESCALATION</td><td>Sudo</td></tr>
+<tr><td>PRIVATE KEY</td><td>paste in secret key</td></tr>
+</table>
+<p><img src="cred.png" width=50% height=auto><br>
+<i>Figure 5: Adding a Credential</i></p>
+
+<h4>Step 1:</h4>
+
+<p>Click on PROJECTS</p>
+
+<h4>Step 2:</h4>
+
+<p>Select ADD</p>
+
+<h4>Step 3:</h4>
+
+<p>Complete the form using the following entries</p>
+
+<table border=1>
+<tr><td valign=top>NAME</td><td valign=top>Ansible Workshop Project</td></tr>
+<tr><td valign=top>DESCRIPTION</td><td valign=top>workshop playbooks</td></tr>
+<tr><td valign=top>ORGANIZATION</td><td valign=top>Default</td></tr>
+<tr><td valign=top>SCM TYPE</td><td valign=top>Git</td></tr>
+<tr><td valign=top>SCM URL</td><td valign=top>https://github.com/ansible/lightbulb</td></tr>
+<tr><td valign=top>SCM BRANCH</td><td></td></tr>
+<td valign=top>SCM UPDATE OPTIONS</td>
+<td>
+<ul>
+<li>Clean
+<li>Delete on Update
+<li>Update on Launch
+</ul>
+</td>
+</tr></table>
+<p><img src="new.png" width=50% height=auto><br>
+<i>Figure 6: Defining a Project</i>
+</p>	
+
+<h4>Step 4:</h4>
+
+<p>Select SAVE</p>
+
+<h3>Creating a Inventory</h3>
+
+<p>An inventory is a collection of hosts against which jobs may be launched. Inventories are divided into groups and these groups contain the actual hosts. Groups may be sourced manually, by entering host names into Tower, or from one of Ansible Tower's supported cloud providers.</p>
+
+<p>An Inventory can also be imported into Tower using the <b>tower-manage</b> command and this is how we are going to add an inventory for this workshop.</p>
+
+<h4>Step 1:</h4>
+
+<p>Click on INVENTORIES</p>
+
+<h4>Step 2:</h4>
+
+<p>Select ADD</p>
+
+<h4>Step 3:</h4>
+
+<p>Complete the form using the following entries</p>
+
+<table>
+<tr><td>NAME</td><td>Ansible Workshop Inventory</td></tr>
+<tr><td>DESCRIPTION</td><td>workshop hosts</td></tr>
+<tr><td>ORGANIZATION</td><td>Default</td></tr>
+</table>
+
+<p><img src="newinv.png" width=50% height=auto><br>
+<i>Figure 7: Create an Inventory</i></p>
+
+<h4>Step 4:</h4>
+
+<p>Select SAVE </p>
+
+<h4>Step 5:</h4>
+
+<p>Using ssh, login to your control node, if by any chance you closed the wetty browser window.</p>
+
+<p>https://workshopname.tower.0.redhatgov.io:8888/wetty/ssh/ec2-user</p>
+
+<h4>Step 6:</h4>
+
+<p>Use the <b>tower-manage</b> command to import an existing inventory. <i>(Be sure to replace <username> with your actual username)</i></p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+sudo tower-manage inventory_import --source=/home/ec2-user/hosts --inventory-name="Ansible Workshop Inventory"
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>You should see output similar to the following:<br>
+<img src="awi.png" width=50% height=auto><br>
+<i>Figure 8: Importing an inventory with tower-manage</i></p>
+
+<p>Feel free to browse your inventory in Tower. You should now notice that the inventory has been populated with Groups and that each of those groups contain hosts.</p>
+
+<p><img src="groups.png" width=50% height=auto><br><i>Figure 9: Inventory with Groups</i></p>
+
+<h4>End Result</h4>
+
+<p>At this point, we are doing with our basic configuration of Ansible Tower. In exercise 2.2, we will be soley focused on creating and running a job template so you can see Tower in action</p>
+<hr>
+
+<h2><a name="Exercise 2.2">Exercise 2.2 - Creating and Running a Job Template</a></h2>
+
+<p>A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times.</p>
+
+<h3>Creating a Job Template</h3>
+
+<h4>Step 1:</h4>
+
+<p>Select TEMPLATES</p>
+
+<h4>Step 2:</h4>
+
+<p>Click on ADD, and select JOB TEMPLATE</p>
+
+<h4>Step 3:</h4>
+
+<p>Complete the form using the following values</p>
+
+<table border=1>
+<tr><td>NAME</td><td>Apache Basic Job Template</td></tr>
+<tr><td>DESCRIPTION</td><td>Template for the apache-basic-playbook</td></tr>
+<tr><td>JOB TYPE</td><td>Run</td></tr>
+<tr><td>INVENTORY</td><td>Ansible Workshop Inventory</td></tr>
+<tr><td>PROJECT</td><td>Ansible Workshop Project</td></tr>
+<tr><td>PLAYBOOK</td><td>examples/apache-basic-playbook/site.yml</td></tr>
+<tr><td>MACHINE CREDENTIAL</td><td>Ansible Workshop Credential</td></tr>
+<tr><td>LIMIT</td><td>web</td></tr>
+<tr><td>OPTIONS</td><td>Enable Privilege Escalation</td></tr>
+</table>
+
+<p><img src="new-temp.png" width=75% height=auto><br>
+<i>Figure 11: Job Template Form</i></p>
+
+<h4>Step 4:</h4>
+
+<p>Click SAVE and then select ADD SURVEY</p>
+
+<h4>Step 5:</h4>
+
+<p>Complete the survey form with following values</p>
+
+<table border=1>
+<tr><td>PROMPT</td><td>Please enter a test message for your new website</td></tr>
+<tr><td>DESCRIPTION</td><td>Website test message prompt</td></tr>
+<tr><td>ANSWER VARIABLE NAME</td><td>apache_test_message</td></tr>
+<tr><td>ANSWER TYPE</td><td>Text</td></tr>
+<tr><td>MINIMUM/MAXIMUM LENGTH</td><td>Use the defaults</td></tr>
+<tr><td>DEFAULT ANSWER</td><td>Be creative, keep it clean, we're all professionals here</td></tr></table>
+
+<p>
+<img src="abjt.png" width=25% height=auto><br>
+<i>Figure 12: Survey Form</i>
+</p>
+
+<h4>Step 6:</h4>
+
+<p>Select ADD</p>
+
+<h4>Step 7:</h4>
+
+<p>Select SAVE</p>
+
+<h4>Step 8:</h4>
+
+<p>Back on the main Job Template page, select SAVE again.</p>
+
+<h3>Running a Job Template</h3>
+
+<p>Now that you've sucessfully creating your Job Template, you are ready to launch it. Once you do, you will be redirected to a job screen which is refreshing in realtime showing you the status of the job.</p>
+
+<h3>Step 1:</h3>
+
+<p>Select TEMPLATES</p>
+
+<table>
+<tr><td><img src="exclamation_blue.png"></td><td>
+Alternatively, if you haven't navigated away from the job templates creation page, you can scroll down to see all existing job templates
+</td></tr></table>
+
+<h3>Step 2:</h3>
+
+<p>Click on the rocketship icon Add for the Apache Basic Job Template</p>
+
+<h3>Step 3:</h3>
+
+<p>When prompted, enter your desired test message</p>
+
+<p><img src="abjt2.png" width=50% height=auto><br><i>Figure 13: Survey Prompt</i></p>
+
+<h4>Step 4:</h4>
+
+<p>Select LAUNCH Survey</p>
+
+<h4>Step 5:</h4>
+
+<p>Sit back, watch the magic happen</p>
+
+<p>One of the first things you will notice is the summary section. This gives you details about your job such as who launched it, what playbook it's running, what the status is, i.e. pending, running, or complete.</p>
+
+<p><img src="results.png" width=50% height=auto><br>
+<i>Figure 14: Job Summary</i></p>
+
+<p>Scrolling down, you will be able to see details on the play and each task in the playbook.</p>
+
+<p><img src="details.png" width=50% height=auto><br>
+<i>Figure 15: Play and Task Details</i></p>
+
+<p>To the right, you can view standard output; the same way you could if you were running Ansible Core from the command line.</p>
+
+<p><img src="std.png" width=50% height=auto><br>
+<i>Figure 16: Job Standard Output</i></p>
+
+<h4>Step 6:</h4>
+
+<p>Once your job is sucessful, navigate to your new website</p>
+
+<p>http://workshopname.0.redhatgov.io</p>
+
+<p>If all went well, you should see something like this, but with your own custom message of course.</p>
+
+<p><img src="newwebsite.png" width=50% height=auto><br>
+<i>Figure 17: New Website with Personalized Test Message</i>
+</p>
+
+<h4>End Result</h4>
+
+<p>At this point in the workshop, you've experienced the core functionality of Ansible Tower. But wait... Tere's more! You've just begun to explore the possibilities of Ansible Core and Tower. Take a look at the resources page in this guide to explore some more features.</p>
+
+<hr>
+<h2><a name="Exercise 3.0">Exercise 3.0 - Using Ansible to Implement Security</a></h2>
+
+<p>
+In this exercise, we are going to use Ansible Tower to run DISA STIG and NIST 800-53 evaluations of our environment. Note that the NIST 800-53 role also includes the execution of DISA STIG evaluation against targeted hosts.</p>
+
+<p>
+DISA STIG controls https://galaxy.ansible.com/MindPointGroup/RHEL7-STIG/
+</p>
+
+<p>
+NIST 800-53 controls https://galaxy.ansible.com/rhtps/800-53/
+</p>
+
+<h3>Adding the DISA STIG and NIST 800-53 role to your Tower node</h3>
+
+<h4>Step 1:</h4>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+sudo ansible-galaxy install rhtps.800-53
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 2:</h4>
+
+<p>
+Now that you have the role installed on your Tower node, we need to create a playbook that uses it. First, let's create a storage directory for playbooks, so that we can reference them from a Tower project, and then we'll create the playbook:</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+sudo mkdir -p /var/lib/awx/projects/playbooks
+sudo vim /var/lib/awx/projects/playbooks/800-53.yml
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 3:</h4>
+
+<p>
+Let's create the needed playbook. You should have a pretty good understanding of playbooks by now, so we won't go over this, in detail. Please do feel free to ask questions, though, if there is something that you don't understand.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+sudo vim /var/lib/awx/projects/playbooks/800-53.yml
+
+</pre>
+</td>
+</tr>
+</table>
+
+<p>
+Note the use of the register, with_items, and when directives. These are how Ansible implements variable creation, recursion, and conditionals, respectively.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<pre>
+
+---
+- hosts: web
+  become: yes
+  vars:
+    scap_reports_dir: /tmp
+    scap_profile: stig-rhel7-disa
+  roles:
+    - rhtps.800-53
+
+  tasks:
+    - name: determine the most recent scap report
+      command: ls -tr /tmp/scap_reports/
+      register: results
+
+    - name: create the scap directory in the web server content
+      file:
+        name: /var/www/html/scap
+        state: directory
+        mode: 0755
+
+    - name: copy SCAP reports to the web server content directory
+      copy:
+        remote_src: True
+        src: "/tmp/scap_reports/{{ item }}"
+        dest: /var/www/html/scap
+        mode: 0644
+      with_items: "{{ results.stdout_lines }}"
+      when: item | match("scan-xccdf-report-*")
+
+</pre>
+</td>
+</tr>
+</table>
+
+<h4>Step 4:</h4>
+
+<p>Save and quit from editing, and then we will move on to the in-Tower setup.</p>
+
+<h3>Configuring a security project and job template in Ansible Tower</h3>
+
+<h4>Step 1:</h4>
+
+<p>In your Tower window, click on PROJECTS</p>
+
+<h4>Step 2:</h4>
+
+<p>Select ADD </p>
+
+<h4>Step 3:</h4>
+
+<p>Enter the following values into your new project. Note that the <b>PLAYBOOK DIRECTORY</b> item should show <b>playbooks</b>, as an option, when you click on it.</p>
+
+<table border=1>
+<tr><td>NAME</td><td>NIST 800-53 and DISA STIG</td></tr>
+<tr><td>DESCRIPTION</td><td>Security Project</td></tr>
+<tr><td>ORGANIZATION</td><td>Default</td></tr>
+<tr><td>SCM TYPE</td><td>Manual</td></tr>
+<tr><td>PROJECT BASE PATH</td><td>/var/lib/awx/projects</td></tr>
+<tr><td>PLAYBOOK DIRECTORY</td><td>playbooks</td></tr>
+</table>
+
+<h4>Step 4:</h4>
+
+<p>Select SAVE</p>
+
+<h4>Step 5:</h4>
+
+<p>In your Tower window, click on <b>TEMPLATES</b></p>
+
+<h4>Step 6:</h4>
+
+<p>Click on ADD, and select <b>JOB TEMPLATE</b></p>
+
+<h4>Step 7:</h4>
+
+<p>Complete the form using the following values. Note that the <b>PLAYBOOK</b> field should offer <b>800-53.yml</b> as an option, when clicked.</p>
+
+<table border=1>
+<tr><td>NAME</td><td>NIST 800-53 and DISA STIG Job Template</td></tr>
+<tr><td>DESCRIPTION</td><td>Template for security playbooks</td></tr>
+<tr><td>JOB TYPE</td><td>Run</td></tr>
+<tr><td>INVENTORY</td><td>Ansible Workshop Inventory</td></tr>
+<tr><td>PROJECT</td><td>NIST 800-53 and DISA STIG</td></tr>
+<tr><td>PLAYBOOK</td><td>800-53.yml</td></tr>
+<tr><td>MACHINE CREDENTIAL</td><td>Ansible Workshop Credential</td></tr>
+<tr><td>LIMIT</td><td>web</td></tr>
+<tr><td>OPTIONS</td><td>Enable Privilege Escalation</td></tr>
+</table>
+
+<h4>Step 8:</h4>
+
+<p>Click SAVE, to store your new template, and we are ready to run it.</p>
+
+<p>Click on the rocketship icon Add next to the <b>NIST 800-53 Job Template</b> entry, to launch the job.</p>
+
+<p>You can see what the job looks like, as it is executing, and what the SCAP results look like, when uploaded to your second node, in the panel, below.</p>
+
+<ul>
+<li>Job Status
+<li>Results
+</ul>
+
+<h4>End Result</h4>
+
+<p>You can watch the scan run against your managed node. Note that each compliance check is named and detailed.</p>
+
+<p>Once the check is complete, you can open a new tab in your web browser, and navigate to the following URL, where workshopname is the workshop prefix, and # is the number that your instructor gave you:</p>
+
+<p>http://workshopname.node.#.redhatgov.io/scap</p>
+
+<p>Click on the link called <b>scan-xccdf-report-...</b> refiew the SCAP report that was generated. Note the failures in the report; look at the machines, if you want, via your Wetty ssh session, to see what the problems might be.</p>
+
+<hr>
+
+<h2><a name="Wrapup">Wrapup</a></h2>
+
+<p>That wraps up what we have planned for today. We hope you’ve learned something valuable about Ansible and Ansible Tower that you can apply in your daily role.</p>
+
+<p>What do you think? How can we help you understand Ansible Tower better?</p>
+
+<p>Before you leave, check out the <b>Resources</b> page that is part of this guide. There you can find a ton of links that will further your Ansible education.</p>
+
+<p>This <b>Participant Guide</b> will remain active for the next two weeks. Please take advantage of it by creating your own Ansible and Ansible Tower environment back at your organization.</p>
+
+<p>Thank you for your time and participation!</p>
+
+</body>
+</html>
