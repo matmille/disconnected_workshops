@@ -1,5 +1,6 @@
 install
 cdrom
+repo --name="RPMs" --baseurl=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}
 lang en_US.UTF-8
 keyboard us
 network --onboot yes --device enps0 --bootproto dhcp --noipv6
@@ -46,6 +47,7 @@ logvol swap --name=lv_swap --vgname=VolGroup --size=2016
 # Packages selection (%packages section is required)
 %packages --nobase
 @core --nodefaults
+ansible
 cockpit
 cockpit-system
 cockpit-ws

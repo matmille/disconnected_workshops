@@ -1,6 +1,6 @@
 install
 cdrom
-repo --name="Red Hat base, extras, and optional RPMs" --url=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}
+repo --name="RPMs" --baseurl=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}
 lang en_US.UTF-8
 keyboard us
 network --onboot yes --device enps0 --bootproto dhcp --noipv6
