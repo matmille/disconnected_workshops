@@ -1,0 +1,102 @@
+---
+
+- name: Stage Apache HTTPD workshop-docs configuration file
+  template:
+    src: "{{ www_file_configuration_workshopdocs_template }}"
+    dest: "/etc/httpd/conf.d/{{ www_file_configuration_workshopdocs }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
+
+- name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: re-Start Apache HTTPD (to ensure latest configuration is loaded)
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+#####
+# Workshop files
+
+- name: Create directory for all workshop-docs
+  file:
+    path: "{{ share_directory }}/workshop-docs"
+    state: directory
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  tags:
+    - hypervisor_setup
+
+- name: Set permissions for workshop-docs
+  file:
+    path: "{{ share_directory }}/workshop-docs"
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  tags:
+    - hypervisor_setup
+
+- name: Copy workshop homepage to workshop-docs
+  template:
+    src: "templates/workshop-docs/index.html"
+    dest: "{{ share_directory }}/workshop-docs/index.html"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  tags:
+    - hypervisor_setup
+
+- name: Copy image files to workshop-docs directory
+  copy:
+    src: "templates/workshop-docs/{{ item }}"
+    dest: "{{ share_directory }}/workshop-docs/"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  with_items:
+    - "index.html"
+    - "abjt.png"
+    - "abjt2.png"
+    - "ansible-basic-playbook.png"
+    - "ansible-breakdown.png"
+    - "ansible_output.png"
+    - "arch.png"
+    - "awi.png"
+    - "cred.png"
+    - "details.png"
+    - "exclamation.png"
+    - "exclamation_blue.png"
+    - "groups.png"
+    - "lic.png"
+    - "lightbulb.png"
+    - "new-temp.png"
+    - "new.png"
+    - "newinv.png"
+    - "newrole.png"
+    - "newwebsite.png"
+    - "results.png"
+    - "std.png"
+    - "tower-login.png"
+  tags:
+    - hypervisor_setup
+
+- name: Run restore context to reload SELinux
+  shell: "restorecon -Rv {{ share_directory }}/workshop-docs"
+  tags:
+    - hypervisor_setup

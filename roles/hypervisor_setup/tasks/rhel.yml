@@ -1,0 +1,163 @@
+---
+
+#####
+# RHEL 7 Content Check
+
+- name: Stage Apache HTTPD RPMs configuration file
+  template:
+    src: "{{ www_file_configuration_RPMs_template }}"
+    dest: "/etc/httpd/conf.d/{{ www_file_configuration_RPMs }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
+
+- name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  tags:
+   - hypervisor_setup
+
+- name: re-Start Apache HTTPD (to ensure latest configuration is loaded)
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: Ensure that RPMs are staged
+  stat:
+    path: "{{ share_directory }}/RPMs"
+  register: repo_RPMs
+  tags:
+    - hypervisor_setup
+
+- name: Update yum.conf to allow for unlimited retries
+  lineinfile:
+    path: /etc/yum.conf
+    line: 'retries=0'
+  when: repo_RPMs.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Update yum.conf to allow for a longer timeout
+  lineinfile:
+    path: /etc/yum.conf
+    line: 'timeout=300'
+  when: repo_RPMs.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Create RPMs directory
+  file:
+    path: "{{ share_directory }}/RPMs"
+    state: directory
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: repo_RPMs.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Set permissions on RPMs directory
+  file:
+    path: "{{ share_directory }}/RPMs"
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: repo_RPMs.stat.exists == True
+  tags:
+    - hypervisor_setup
+
+- name: Create Channel directory(s)
+  file:
+    path: "{{ share_directory }}/RPMs/{{ item }}"
+    state: directory
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  with_items:
+    - rhel-7-server-rpms
+    - rhel-7-server-extras-rpms
+    - rhel-7-server-optional-rpms
+  when: repo_RPMs.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Set ownerships and permissions on Channel directory(s)
+  file:
+    path: "{{ share_directory }}/RPMs/{{ item }}"
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  with_items:
+    - rhel-7-server-rpms
+    - rhel-7-server-extras-rpms
+    - rhel-7-server-optional-rpms
+  when: repo_RPMs.stat.exists == True
+  tags:
+    - hypervisor_setup
+
+- name: Download Channel
+  shell: reposync --gpgcheck -l --repoid={{ item }} --norepopath --download_path={{ share_directory }}/RPMs/{{ item }}
+  with_items:
+    - rhel-7-server-rpms
+    - rhel-7-server-extras-rpms
+    - rhel-7-server-optional-rpms
+  when: repo_RPMs.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions
+  file:
+    path: "{{ share_directory }}/RPMs/{{ item }}/"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+    recurse: yes
+  with_items:
+   - rhel-7-server-rpms
+   - rhel-7-server-extras-rpms
+   - rhel-7-server-optional-rpms
+  tags:
+    - hypervisor_setup
+
+- name: Ensure that RPMs repos exist
+  stat:
+    path: "{{ share_directory }}/RPMs/repodata"
+  register: repodata_RPMs
+  tags:
+    - hypervisor_setup
+
+- name: Run createrepo against downloaded Channel(s)
+  shell: createrepo --database {{ share_directory }}/RPMs
+  when: repodata_RPMs.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions on directories shared RPMS
+  command: find "{{ share_directory }}/RPMs/" -type d -exec chmod -c 0755 {} \;
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions on directories shared RPMS
+  command: find "{{ share_directory }}/RPMs/" -type f -exec chmod -c 0644 {} \;
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions on directories shared RPMS
+  command: chown -R apache:apache "{{ share_directory }}/RPMs/"
+  tags:
+    - hypervisor_setup
+
+- name: Run restore context to reload SELinux
+  shell: "restorecon -Rv {{ share_directory }}/RPMs"

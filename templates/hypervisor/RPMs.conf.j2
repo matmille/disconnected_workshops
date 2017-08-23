@@ -1,0 +1,18 @@
+Listen *:{{ www_port_RPMs }}
+
+NameVirtualHost *:{{ www_port_RPMs }}
+
+<Directory {{ share_directory }}/RPMs/>
+    AllowOverride All
+    IndexOptions NameWidth=800
+    Options +Indexes +FollowSymLinks
+    Order deny,allow
+    Allow from all
+    Require all granted
+</Directory>
+
+<VirtualHost *:{{ www_port_RPMs }}>
+    DocumentRoot "{{ share_directory }}/RPMs/"
+    ErrorLog "logs/RPMs-error.log"
+    CustomLog "logs/RPMs-access.log" combined
+</VirtualHost>

@@ -1,0 +1,17 @@
+Listen *:{{ www_port_workshopdocs }}
+
+NameVirtualHost *:{{ www_port_workshopdocs }}
+
+<Directory {{ share_directory }}/workshop-docs/>
+    AllowOverride All
+    Options +FollowSymLinks
+    Order deny,allow
+    Allow from all
+    Require all granted
+</Directory>
+
+<VirtualHost *:{{ www_port_workshopdocs }}>
+    DocumentRoot "{{ share_directory }}/workshop-docs/"
+    ErrorLog "logs/workshop-docs-error.log"
+    CustomLog "logs/workshop-docs-access.log" combined
+</VirtualHost>

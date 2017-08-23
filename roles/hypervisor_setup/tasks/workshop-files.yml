@@ -1,0 +1,96 @@
+---
+
+- name: Stage Apache HTTPD workshop-files configuration file
+  template:
+    src: "{{ www_file_configuration_workshopfiles_template }}"
+    dest: "/etc/httpd/conf.d/{{ www_file_configuration_workshopfiles }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
+
+#####
+# Workshop files
+
+- name: Ensure that workshop-files are staged
+  stat:
+    path: "{{ share_directory }}/workshop-files"
+  register: workshopfiles
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for all workshop-files
+  file:
+    path: "{{ share_directory }}/workshop-files"
+    state: directory
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: workshopfiles.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Set permissions for workshop-files
+  file:
+    path: "{{ share_directory }}/workshop-files"
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: workshopfiles.stat.exists == True
+  tags:
+    - hypervisor_setup
+
+- name: Stage workshop-files - httpd.conf.j2
+  get_url:
+    url: http://ansible-workshop.redhatgov.io/workshop-files/httpd.conf.j2
+    dest: "{{ share_directory }}/workshop-files/httpd.conf.j2"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  tags:
+    - hypervisor_setup
+
+- name: Stage workshop-files - index.html.j2
+  get_url:
+    url: http://ansible-workshop.redhatgov.io/workshop-files/index.html.j2
+    dest: "{{ share_directory }}/workshop-files/index.html.j2"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: workshopfiles.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Stage workshop-files - license
+  get_url:
+    url: https://raw.githubusercontent.com/RedHatGov/redhatgov.workshops/master/ansible_tower/roles/ansible.tower/files/license
+    dest: "{{ share_directory }}/workshop-files/license"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: workshopfiles.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Stage workshop-files - .vimrc
+  get_url:
+    url: https://raw.githubusercontent.com/RedHatGov/redhatgov.workshops/master/ansible_tower/roles/ansible.tower/files/vimrc
+    dest: "{{ share_directory }}/workshop-files/.vimrc"
+    mode: 0644
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+  when: workshopfiles.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Run restore context to reload SELinux
+  shell: "restorecon -Rv {{ share_directory }}/workshop-files"
+  tags:
+    - hypervisor_setup
