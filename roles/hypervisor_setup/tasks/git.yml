@@ -9,7 +9,7 @@
     state: started
     enabled: yes
   tags:
-    cd - hypervisor_setup
+   - hypervisor_setup
 
 - name: re-Start GIT daemon (to ensure latest configuration is loaded)
   service:
@@ -69,13 +69,11 @@
     - hypervisor_setup
 
 - name: Allow GIT access
-  copy:
-    remote_src: True
-    src: "{{ git_projects }}/.ssh/id_rsa.pub"
+  assemble:
+    src: /guests/.ssh
     dest: "{{ git_projects }}/.ssh/authorized_keys"
-    owner: git
-    group: git
-  when: stat_authorized_keys.stat.exists == False
+  with_items:
+    - "{{ guests }}"
   tags:
    - hypervisor_setup
 
@@ -181,5 +179,51 @@
     owner: root
     group: root
     mode: 0644
+  tags:
+    - hypervisor_setup
+
+- name: Ensure that lightbulb is in share_directory
+  stat:
+    path: "{{ share_directory }}/lightbulb"
+  register: lightbulb
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for lightbulb in share_directory
+  file:
+    path: "{{ share_directory }}/lightbulb"
+    state: directory
+    owner: git
+    group: git
+    mode: 0775
+  when: lightbulb.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Clone lightbuilb from GitHub if it does not exist
+  command: git clone https://github.com/ansible/lightbulb
+  args:
+    chdir: "{{ share_directory }}/lightbulb"
+  become_user: git
+  when: lightbulb.stat.exists == False
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for lightbulb
+  file:
+    path: "{{ git_projects }}/lightbulb"
+    state: directory
+    owner: git
+    group: git
+    mode: 0775
+  tags:
+    - hypervisor_setup
+
+- name: Stage lightbulb in GIT path
+  synchronize:
+    src: "{{ share_directory }}/lightbulb/"
+    dest: "{{ git_projects }}/lightbulb/"
+    delete: yes
+    recursive: yes
   tags:
     - hypervisor_setup

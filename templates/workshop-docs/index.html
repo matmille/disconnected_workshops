@@ -1,5 +1,9 @@
 <html>
 <body>
+<style>
+  preformatted, code {}
+  preformatted {display:block;white-space:pre-wrap}
+</style>
 <h1>Ansible Tower Workshop</h1>
 <h3>Today's Agenda</h3>
 <ol>
@@ -34,7 +38,7 @@
 </ol>
 
 <h4>Conventions Used in This Document</h4>
-	
+
 <table>
 <tr>
 <td>
@@ -53,11 +57,11 @@
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m setup
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -68,7 +72,7 @@ ansible web -m setup
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -79,7 +83,7 @@ httpd_packages:
 - httpd
 - mod_wsgi
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -147,7 +151,7 @@ Each student's personal lab is equipped with the following:
 <img width=50 height=50 src="exclamation.png">
 </td>
 <td>
-Be sure you can log in to your virtual instances. If you can't log in start shouting, loudly, and waving your hands! 
+Be sure you can log in to your virtual instances. If you can't log in start shouting, loudly, and waving your hands!
 </td>
 </tr>
 </table>
@@ -179,11 +183,11 @@ Define your inventory. Inventories are crucial to Ansible as they define remote 
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m ping
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -196,11 +200,11 @@ ansible web -m ping
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m command -a "uptime" -o
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -214,11 +218,11 @@ Take a look at your web node's configuration.  setup module displays ansible fac
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m setup
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -232,11 +236,11 @@ Now, let's install Apache using the yum module.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m yum -a "name=httpd state=present" -b
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -250,11 +254,11 @@ OK, Apache is installed now so let's start it up using the service module.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m service -a "name=httpd state=started" -b
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -268,11 +272,11 @@ Finally, let's clean up after ourselves. First, stop the httpd service.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m service -a "name=httpd state=stopped" -b
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -286,11 +290,11 @@ Next, remove the Apache package.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m yum -a "name=httpd state=absent" -b
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -303,7 +307,7 @@ ansible web -m yum -a "name=httpd state=absent" -b
 <td>
 <img src="exclamation_blue.png">
 </td>
-<td> 
+<td>
 Like many Linux commands, ansible allows for long-form options as well as short-form. For example:
 </td>
 </tr>
@@ -311,11 +315,11 @@ Like many Linux commands, ansible allows for long-form options as well as short-
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web --module-name ping
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -325,11 +329,11 @@ ansible web --module-name ping
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible web -m ping
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -374,12 +378,12 @@ Instead, we are going to create a very simple directory structure for our playbo
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 mkdir ~/apache_basic
 cd ~/apache_basic
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -399,14 +403,14 @@ Now that you are editing <b>install_apache.yml</b>, let's begin by defining the 
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
 name: Install the apache web service
 become: yes
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -429,7 +433,7 @@ If you want to see the entire playbook for reference, skip to the bottom of this
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 tasks:
 - name: install apache
@@ -442,7 +446,7 @@ service:
 name: httpd
 state: started
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -455,13 +459,13 @@ state: started
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 yum:
 name: httpd
 state: present
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -473,13 +477,13 @@ state: present
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 service:
 name: httpd
 state: started
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -516,7 +520,7 @@ Ansible (well, YAML really) can be a bit particular about formatting especially 
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -534,7 +538,7 @@ service:
 name: httpd
 state: started
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -558,11 +562,11 @@ From your playbook directory ( <b>~/apache_basic</b> ), run your playbook.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts install_apache.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -581,11 +585,11 @@ However, before you go ahead and run that command, lets take a few moments to un
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts install_apache.yml --syntax-check
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -610,7 +614,7 @@ Notice that the play and each task is named so that you can see what is being do
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -618,7 +622,7 @@ name: Install the apache web service
 become: yes
 gather_facts: false
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -681,14 +685,14 @@ Navigate to your home directory create a new project and playbook.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cd
 mkdir apache-basic-playbook
 cd apache-basic-playbook
 vim site.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -701,7 +705,7 @@ Add a play definition and some variables to your playbook. se include addtional 
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -714,7 +718,7 @@ httpd_packages:
 apache_test_message: This is a test message
 apache_max_keep_alive_requests: 115
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -728,17 +732,17 @@ Add a new task called <b>install httpd packages.</b>
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 tasks:
 - name: install httpd packages
 yum:
-name: "{{ item }}"
+name: "&#123;&#123; item &#125;&#125;"
 state: present
-with_items: "{{ httpd_packages }}"
+with_items: "&#123;&#123; httpd_packages &#125;&#125;"
 notify: restart apache service
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -753,8 +757,8 @@ notify: restart apache service
 <ul>
 <li><b>vars:</b> You've told Ansible the next thing it sees will be a variable name
 <li><b>httpd_packages</b> You are defining a list-type variable called httpd_packages. What follows is a list of those packages
-<li><b>{{ item }}</b> You are telling Ansible that this will expand into a list item like <b>httpd</b> and <b>mod_wsgi.</b>
-<li><b>with_items: "{{ httpd_packages }}</b> This is your loop which is instructing Ansible to perform this task on every <b>item</b> in <b>httpd_packages</b>
+<li><b>&#123;&#123; item &#125;&#125;</b> You are telling Ansible that this will expand into a list item like <b>httpd</b> and <b>mod_wsgi.</b>
+<li><b>with_items: "&#123;&#123; httpd_packages &#125;&#125;</b> This is your loop which is instructing Ansible to perform this task on every <b>item</b> in <b>httpd_packages</b>
 <li><b>notify: restart apache service</b> This statement is a <b>handler</b>, so we'll come back to it in Section 3.
 </ul>
 </td>
@@ -780,14 +784,14 @@ Create a templates directory in your project directory and download two files.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 mkdir templates
 cd templates
 curl -O http://ansible-workshop.redhatgov.io/workshop-files/httpd.conf.j2
 curl -O http://ansible-workshop.redhatgov.io/workshop-files/index.html.j2
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -799,7 +803,7 @@ curl -O http://ansible-workshop.redhatgov.io/workshop-files/index.html.j2
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 - name: create site-enabled directory
 file:
@@ -823,7 +827,7 @@ name: httpd
 state: started
 enabled: yes
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -835,7 +839,7 @@ enabled: yes
 <td>
 <img src="exclamation_blue.png">
 </td>
-<td>	
+<td>
 <p><b>So... what did I just write?</b></p>
 <ul>
 <li><b>file:</b> This module is used to create, modify, delete files, directories, and symlinks.
@@ -859,7 +863,7 @@ enabled: yes
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 handlers:
 - name: restart apache service
@@ -868,7 +872,7 @@ name: httpd
 state: restarted
 enabled: yes
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -896,7 +900,7 @@ enabled: yes
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -912,9 +916,9 @@ apache_max_keep_alive_requests: 115
 tasks:
 - name: httpd packages are present
 yum:
-name: "{{ item }}"
+name: "&#123;&#123; item &#125;&#125;"
 state: present
-with_items: "{{ httpd_packages }}"
+with_items: "&#123;&#123; httpd_packages &#125;&#125;"
 notify: restart apache service
 
 - name: site-enabled directory is present
@@ -945,7 +949,7 @@ service:
 name: httpd
 state: restarted
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -966,11 +970,11 @@ Make sure you are in the right directory and create a host file.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cd ~/apache-basic-playbook
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -983,11 +987,11 @@ Run your playbook
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts site.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1010,7 +1014,7 @@ While it is possible to write a playbook in one file as we've done throughout th
 </p>
 
 <p>
-Ansible Roles is the way we do this. When you create a role, you deconstruct your playbook into parts and those parts sit in a directory structure. 
+Ansible Roles is the way we do this. When you create a role, you deconstruct your playbook into parts and those parts sit in a directory structure.
 </p>
 
 <p>
@@ -1041,11 +1045,11 @@ Fortunately, you don't have to create all of these directories and files by hand
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cd ~/apache-basic-playbook
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1057,13 +1061,13 @@ cd ~/apache-basic-playbook
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-galaxy init apache-simple
 mkdir roles
 cd roles
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1075,10 +1079,10 @@ cd roles
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 ansible-galaxy init apache-simple
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1092,11 +1096,11 @@ Remove the <b>files</b> and <b>tests</b> directories
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 cd ~/apache-basic-playbook/roles/apache-simple/
 rm -rf files tests
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1112,13 +1116,13 @@ Make a backup copy of site.yml, then create a new site.yml.
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cd ~/apache-basic-playbook
 mv site.yml site.yml.bkup
 vim site.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1130,7 +1134,7 @@ vim site.yml
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -1140,7 +1144,7 @@ become: yes
 roles:
 - apache-simple
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1152,14 +1156,14 @@ roles:
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 # defaults file for apache-simple
 apache_test_message: This is a test message
 apache_max_keep_alive_requests: 115
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1171,7 +1175,7 @@ apache_max_keep_alive_requests: 115
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 # vars file for apache-simple
@@ -1179,7 +1183,7 @@ httpd_packages:
 - httpd
 - mod_wsgi
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1188,7 +1192,7 @@ httpd_packages:
 <tr>
 <td>
 <img src="exclamation_blue.png">
-</td>	
+</td>
 <td>
 <p><b>Hey, wait just a minute there buster.. did you just have us put variables in two seperate places?</b></p>
 
@@ -1216,7 +1220,7 @@ httpd_packages:
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 # handlers file for apache-simple
@@ -1226,7 +1230,7 @@ name: httpd
 state: restarted
 enabled: yes
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1238,15 +1242,15 @@ enabled: yes
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 # tasks file for apache-simple
 - name: install httpd packages
 yum:
-name: "{{ item }}"
+name: "&#123;&#123; item &#125;&#125;"
 state: present
-with_items: "{{ httpd_packages }}"
+with_items: "&#123;&#123; httpd_packages &#125;&#125;"
 notify: restart apache service
 
 - name: create site-enabled directory
@@ -1271,7 +1275,7 @@ name: httpd
 state: started
 enabled: yes
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1283,7 +1287,7 @@ enabled: yes
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 mkdir -p ~/apache-basic-playbook/roles/apache-simple/templates/
 cd ~/apache-basic-playbook/roles/apache-simple/templates/
@@ -1291,7 +1295,7 @@ curl -O http://ansible-workshop.redhatgov.io/workshop-files/httpd.conf.j2
 curl -O http://ansible-workshop.redhatgov.io/workshop-files/index.html.j2
 rm -rf ~/apache-basic-playbook/templates/
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1307,11 +1311,11 @@ rm -rf ~/apache-basic-playbook/templates/
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts site.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1323,11 +1327,11 @@ ansible-playbook --private-key=~/.ssh/workshopname-tower -i ../hosts site.yml
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-basic-playbook role-based stdout
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1351,11 +1355,11 @@ ansible-basic-playbook role-based stdout
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cd /tmp
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1367,11 +1371,11 @@ cd /tmp
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 curl -O http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1383,11 +1387,11 @@ curl -O http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-late
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 tar xvfz /tmp/ansible-tower-setup-latest.tar.gz
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1399,11 +1403,11 @@ tar xvfz /tmp/ansible-tower-setup-latest.tar.gz
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cd /tmp/ansible-tower-setup-*
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1415,11 +1419,11 @@ cd /tmp/ansible-tower-setup-*
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 vi inventory
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1431,7 +1435,7 @@ vi inventory
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 [tower]
 localhost ansible_connection=local
@@ -1457,7 +1461,7 @@ rabbitmq_cookie=cookiemonster
 # Needs to be true for fqdns and ip addresses
 rabbitmq_use_long_name=false
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1469,11 +1473,11 @@ rabbitmq_use_long_name=false
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 sudo ./setup.sh
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1538,11 +1542,11 @@ sudo ./setup.sh
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 curl -O https://s3.amazonaws.com/ansible-tower-workshop-license/license
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1552,14 +1556,14 @@ curl -O https://s3.amazonaws.com/ansible-tower-workshop-license/license
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ansible-vault decrypt license
 ...
 
 Vault password:
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1569,11 +1573,11 @@ Vault password:
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 export WORKSHOP_PREFIX=" "
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1583,7 +1587,7 @@ export WORKSHOP_PREFIX=" "
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 curl -k https://$WORKSHOP_PREFIX.tower.0.redhatgov.io/api/v1/config/ \
 -H 'Content-Type: application/json' \
@@ -1591,7 +1595,7 @@ curl -k https://$WORKSHOP_PREFIX.tower.0.redhatgov.io/api/v1/config/ \
 --data @license \
 --user admin:ansibleWS
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1621,11 +1625,11 @@ curl -k https://$WORKSHOP_PREFIX.tower.0.redhatgov.io/api/v1/config/ \
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 cat ~/.ssh/workshop-tower
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1672,7 +1676,7 @@ cat ~/.ssh/workshop-tower
 </tr></table>
 <p><img src="new.png" width=50% height=auto><br>
 <i>Figure 6: Defining a Project</i>
-</p>	
+</p>
 
 <h4>Step 4:</h4>
 
@@ -1722,11 +1726,11 @@ cat ~/.ssh/workshop-tower
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 sudo tower-manage inventory_import --source=/home/ec2-user/hosts --inventory-name="Ansible Workshop Inventory"
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1893,11 +1897,11 @@ NIST 800-53 controls https://galaxy.ansible.com/rhtps/800-53/
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 sudo ansible-galaxy install rhtps.800-53
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1910,12 +1914,12 @@ Now that you have the role installed on your Tower node, we need to create a pla
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 sudo mkdir -p /var/lib/awx/projects/playbooks
 sudo vim /var/lib/awx/projects/playbooks/800-53.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1928,11 +1932,11 @@ Let's create the needed playbook. You should have a pretty good understanding of
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 sudo vim /var/lib/awx/projects/playbooks/800-53.yml
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>
@@ -1943,7 +1947,7 @@ Note the use of the register, with_items, and when directives. These are how Ans
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
-<pre>
+<preformatted>
 
 ---
 - hosts: web
@@ -1968,13 +1972,13 @@ Note the use of the register, with_items, and when directives. These are how Ans
     - name: copy SCAP reports to the web server content directory
       copy:
         remote_src: True
-        src: "/tmp/scap_reports/{{ item }}"
+        src: "/tmp/scap_reports/&#123;&#123; item &#125;&#125;"
         dest: /var/www/html/scap
         mode: 0644
-      with_items: "{{ results.stdout_lines }}"
+      with_items: "&#123;&#123; results.stdout_lines &#125;&#125;"
       when: item | match("scan-xccdf-report-*")
 
-</pre>
+</preformatted>
 </td>
 </tr>
 </table>

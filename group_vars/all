@@ -87,5 +87,14 @@ samba_file_configuration: smb.conf
 samba_file_configuration_template: "templates/hypervisor/{{ samba_file_configuration }}.j2"
 www_file_configuration_ks: ks.conf
 www_file_configuration_ks_template: "templates/hypervisor/{{ www_file_configuration_ks }}.j2"
-www_port: 8000
+www_port_ks: 8000
+www_file_configuration_RPMs: RPMs.conf
+www_file_configuration_RPMs_template: "templates/hypervisor/{{ www_file_configuration_RPMs }}.j2"
+www_port_RPMs: 8010
+www_file_configuration_workshopdocs: workshop-docs.conf
+www_file_configuration_workshopdocs_template: "templates/hypervisor/{{ www_file_configuration_workshopdocs }}.j2"
+www_port_workshopdocs: 8020
+www_file_configuration_workshopfiles: workshop-files.conf
+www_file_configuration_workshopfiles_template: "templates/hypervisor/{{ www_file_configuration_workshopfiles }}.j2"
+www_port_workshopfiles: 8030
 share_directory: /shared

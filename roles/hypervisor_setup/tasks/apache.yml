@@ -5,11 +5,38 @@
 
 - name: Enable Port for HTTP communication in SELinux
   seport:
-    ports: "{{ www_port }}"
+    ports: "{{ item }}"
     proto: tcp
     setype: http_port_t
     state: present
   ignore_errors: yes
+  with_items:
+    - "{{ www_port_ks }}"
+    - "{{ www_port_RPMs }}"
+    - "{{ www_port_workshopdocs }}"
+    - "{{ www_port_workshopfiles }}"
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port for Apache HTTPD
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    zone: public
+    state: enabled
+  with_items:
+    - "{{ www_port_ks }}"
+    - "{{ www_port_RPMs }}"
+    - "{{ www_port_workshopdocs }}"
+    - "{{ www_port_workshopfiles }}"
+  tags:
+    - hypervisor_setup
+
+- name: Reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+    enabled: yes
   tags:
     - hypervisor_setup
 
@@ -28,21 +55,3 @@
     enabled: yes
   tags:
     - hypervisor_setup
-
-- name: Open firewall port for Apache HTTPD
-  firewalld:
-    port: "{{ www_port }}/tcp"
-    permanent: true
-    zone: public
-    state: enabled
-  tags:
-    - hypervisor_setup
-
-- name: Reload firewalld
-  service:
-    name: firewalld
-    state: reloaded
-    enabled: yes
-  tags:
-    - hypervisor_setup
-

@@ -1,6 +1,6 @@
-Listen *:{{ www_port }}
+Listen *:{{ www_port_ks }}
 
-NameVirtualHost *:{{ www_port }}
+NameVirtualHost *:{{ www_port_ks }}
 
 <Directory {{ kickstart_directory }}/>
     Options FollowSymLinks
@@ -10,7 +10,7 @@ NameVirtualHost *:{{ www_port }}
     Require all granted
 </Directory>
 
-<VirtualHost *:{{ www_port }}>
+<VirtualHost *:{{ www_port_ks }}>
     DocumentRoot "{{ kickstart_directory }}/"
     ErrorLog "logs/kickstart-error.log"
     CustomLog "logs/kickstart-access.log" combined

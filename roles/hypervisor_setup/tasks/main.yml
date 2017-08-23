@@ -41,6 +41,11 @@
     - hypervisor_setup
 
 #####
+# Apache
+
+- include: apache.yml
+
+#####
 # Kickstart Web Config
 
 - include: kickstart.yml
@@ -95,19 +100,24 @@
 - include: rhel.yml
 
 #####
-# Git
+# Workshop Files
 
-- include: git.yml
+- include: workshop-docs.yml
 
 #####
-# Apache
+# Workshop Files
 
-- include: apache.yml
+- include: workshop-files.yml
 
 #####
 # KVM
 
 - include: kvm.yml
+
+#####
+# Git
+
+- include: git.yml
 
 #####
 # NFS
@@ -125,8 +135,9 @@
 - name: Set SELinux context of shared directory
   sefcontext:
     target: "{{ share_directory }}(/.*)?"
-    setype: samba_share_t
+    setype: public_content_rw_t
     state: present
+    reload: True
   ignore_errors: yes
   tags:
     - hypervisor_setup
