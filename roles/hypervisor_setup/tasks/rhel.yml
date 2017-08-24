@@ -149,7 +149,7 @@
   tags:
     - hypervisor_setup
 
-- name: Set file permissions on directories shared RPMS
+- name: Set file permissions on files shared RPMS
   command: find "{{ share_directory }}/RPMs/" -type f -exec chmod -c 0644 {} \;
   tags:
     - hypervisor_setup

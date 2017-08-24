@@ -92,6 +92,102 @@
   tags:
     - hypervisor_setup
 
+- name: Resolve Guest IP addresses
+  command: "dig @{{ kvm_private_network_ip }} +short {{ item.name }}.default"
+  register: resolved_IPs
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Update /etc/hosts with Guest IPs
+  lineinfile:
+    dest: /etc/hosts
+    regexp: ".*{{ item.item.name }}.default$"
+    line: "{{ item.stdout }} {{ item.item.name }}.default"
+    state: present
+  with_items:
+    - "{{ resolved_IPs.results }}"
+  tags:
+    - hypervisor_setup
+
+- name: Update /etc/hosts with Guest IPs
+  lineinfile:
+    dest: /etc/hosts
+    regexp: ".*{{ item.item.name }}.default$"
+    line: "{{ item.stdout }} {{ item.item.name }}.default"
+    state: present
+  with_items:
+    - "{{ resolved_IPs.results }}"
+  tags:
+    - hypervisor_setup
+
+- name: Setup forwards (Display ports to link)
+  debug:
+    msg: "{{ item.0.name }} {{ item.1.label }} {{ item.1.internal }} {{ item.1.external }}"
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
+- name: Open firewall port(s) for guests (socat)
+  firewalld:
+    port: "{{ item.1.external }}/tcp"
+    permanent: true
+    state: enabled
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
+- name: If forward exist already - stop
+  service:
+    name: "rh-workshop-{{ item.0.name }}-{{ item.1.internal }}-{{ item.1.external }}-socat.service"
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
+- name: If forward exist already - absent
+  service:
+    name: "rh-workshop-{{ item.0.name }}-{{ item.1.internal }}-{{ item.1.external }}-socat.service"
+    state: absent
+    enabled: no
+  ignore_errors: yes
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
+- name: Setup forwards to internal guests via socat
+  copy:
+    dest: "/etc/systemd/system/rh-workshop-{{ item.0.name }}-{{ item.1.internal }}-{{ item.1.external }}-socat.service"
+    content: "[Service]\nExecStart=/usr/bin/socat TCP4-LISTEN:{{ item.1.external }},fork TCP4:{{ item.0.name }}.default:{{ item.1.internal }}\n"
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
+- name: Start socat services
+  service:
+    name: "rh-workshop-{{ item.0.name }}-{{ item.1.internal }}-{{ item.1.external }}-socat.service"
+    state: started
+    enabled: yes
+  ignore_errors: yes
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
 - name: Allow time for newly created Virtual Machine to boot
   pause:
     minutes: 1

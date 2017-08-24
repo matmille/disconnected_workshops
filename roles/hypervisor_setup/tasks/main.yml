@@ -8,6 +8,7 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - bind-utils
     - cockpit
     - cockpit-dashboard
     - cockpit-shell
@@ -34,6 +35,7 @@
     - qemu-kvm-tools
     - rpcbind
     - samba
+    - socat
     - virt-install
     - virt-manager
     - yum-utils

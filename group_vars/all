@@ -21,6 +21,16 @@ guests:
       size: "{{ guest_tower_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "tower"
+    ports:
+      - label: cockpit
+        internal: 9090
+        external: 19000
+      - label: http
+        internal: 80
+        external: 19001
+      - label: https
+        internal: 443
+        external: 19002
   - name: node-1
     url:  "{{ guest_url }}"
     cpu: 1
@@ -30,6 +40,16 @@ guests:
     os:
       type: linux
       variant: rhel7
+    ports:
+      - label: cockpit
+        internal: 9090
+        external: 19003
+      - label: http
+        internal: 80
+        external: 19004
+      - label: https
+        internal: 443
+        external: 19005
     disk:
       size: "{{ guest_node_disk }}"
       path: "{{ guest_image_dir }}"
@@ -47,6 +67,16 @@ guests:
       size: "{{ guest_tower_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "tower"
+    ports:
+      - label: cockpit
+        internal: 9090
+        external: 19006
+      - label: http
+        internal: 80
+        external: 19007
+      - label: https
+        internal: 443
+        external: 19008
   - name: node-2
     url:  "{{ guest_url }}"
     cpu: 1
@@ -60,6 +90,16 @@ guests:
       size: "{{ guest_node_disk }}"
       path: "{{ guest_image_dir }}"
     ks: "node"
+    ports:
+      - label: cockpit
+        internal: 9090
+        external: 19009
+      - label: http
+        internal: 80
+        external: 19010
+      - label: https
+        internal: 443
+        external: 19011
 git_port: 8080
 git_projects: /var/lib/git
 git_www: /var/www/git
