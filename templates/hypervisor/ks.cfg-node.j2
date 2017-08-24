@@ -14,8 +14,6 @@ authconfig --enableshadow --passalgo=sha512
 selinux --enforcing
 timezone --utc America/New_York
 
-services --enabled=cockpit.socket
-
 # Plaintext password is: password
 bootloader --location=mbr --append="crashkernel=auto rhgb quiet" --password={{ password_grub2 }}
 
@@ -49,8 +47,17 @@ logvol swap --name=lv_swap --vgname=VolGroup --size=2016
 @core --nodefaults
 ansible
 cockpit
+cockpit-shell
 cockpit-system
 cockpit-ws
+git
+nano
+vim-enhanced
+%end
+
+%post
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+systemctl enable cockpit.socket
 %end
 
 reboot --eject

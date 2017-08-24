@@ -228,6 +228,18 @@
   tags:
     - hypervisor_setup
 
+- name: Set hostname of each of the systems
+  copy:
+    dest: /guests/{{ item.name }}/etc/yum.repos.d/RPMs.repo
+    content: "[RPMs]\nname=RPMS\ngpgcheck=1\nenabled=1\nbaseurl=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
 - name: Create directory for guest SSH host keys (hypervisor)
   file:
     path: /guests/.ssh-host-keys
@@ -263,6 +275,18 @@
 
 - name: Mount home filesystem for all guests to the hypervisor
   shell: guestmount -m /dev/VolGroup/LogVol02:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Create .vimrc on guest for admin
+  copy:
+    src: "{{ share_directory }}/workshop-files/.vimrc"
+    dest: "/guests/{{ item.name }}/admin/.vimrc"
+    owner: admin
+    group: admin
+    mode: 0644
   with_items:
     - "{{ guests }}"
   tags:
