@@ -74,14 +74,14 @@ ansible web -m setup
 <td bgcolor="lightgrey">
 <preformatted>
 
----
-- hosts: web
-name: This is a play within a playbook
-become: yes
-vars:
-httpd_packages:
-- httpd
-- mod_wsgi
+	---
+	- hosts: web
+	  name: This is a play within a playbook
+	  become: yes
+	  vars:
+	    httpd_packages:
+	      - httpd
+	      - mod_wsgi
 
 </preformatted>
 </td>
@@ -167,14 +167,27 @@ At this point, everyone should have logged into each of your 2 nodes. If you hav
 <h2><a name="Section 1: Ad-hoc commands">Section 1: Ad-hoc commands</a></h2>
 
 <p>
-For our first exercise, we are going to run some ad-hoc commands to help you get a feel for how Ansible works. Ansible Ad-Hoc commands enable you to perform tasks on remote nodes without having to write a playbook. y are very useful when you simply need to do one or two things quickly and often, to many remote nodes.
+For our first exercise, we are going to run some ad-hoc commands to help you get a feel for how Ansible works. Ansible Ad-Hoc commands enable you to perform tasks on remote nodes without having to write a playbook. They are very useful when you simply need to do one or two things quickly and often, to many remote nodes.
 </p>
 
 <h3>Step 0:</h3>
 
 <p>
-Define your inventory. Inventories are crucial to Ansible as they define remote machines on which you wish to run commands or your playbook(s). Use <b>vi</b> or <b>vim</b> to create a file called hosts. n, add the appropriate definitions for the node that will function as a web node.
+Define your inventory. Inventories are crucial to Ansible as they define remote machines on which you wish to run commands or your playbook(s). Use <b>vi</b> or <b>vim</b> to create a file called <b>hosts</b>. Then, add the appropriate definitions for the node that will function as a web node.
 </p>
+
+<i>hosts (example).  Note: Each student will have their own node numbers (node-1,node-2,etc.)</i>
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<preformatted>
+	[web]
+	node-1
+
+</preformatted>
+</td>
+</tr>
+</table>
 
 <h3>Step 1:</h3>
 
