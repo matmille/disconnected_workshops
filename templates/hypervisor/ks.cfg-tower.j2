@@ -35,7 +35,7 @@ logvol /home --fstype=xfs --name=LogVol02 --vgname=VolGroup --size=1024 --fsopti
 # CCE-26435-8: Ensure /tmp Located On Separate Partition
 logvol /tmp --fstype=xfs --name=LogVol01 --vgname=VolGroup --size=1024 --fsoptions="nodev,noexec,nosuid"
 # CCE-26639-5: Ensure /var Located On Separate Partition
-logvol /var --fstype=xfs --name=LogVol03 --vgname=VolGroup --size=2048 --fsoptions="nodev"
+logvol /var --fstype=xfs --name=LogVol03 --vgname=VolGroup --size=11264 --fsoptions="nodev"
 # CCE-26215-4: Ensure /var/log Located On Separate Partition
 logvol /var/log --fstype=xfs --name=LogVol04 --vgname=VolGroup --size=1024 --fsoptions="nodev"
 # CCE-26436-6: Ensure /var/log/audit Located On Separate Partition

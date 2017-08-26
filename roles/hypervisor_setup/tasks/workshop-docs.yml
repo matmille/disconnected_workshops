@@ -52,7 +52,7 @@
 
 - name: Copy workshop homepage to workshop-docs
   template:
-    src: "templates/workshop-docs/index.html"
+    src: "templates/workshop-docs/index.html.j2"
     dest: "{{ share_directory }}/workshop-docs/index.html"
     mode: 0644
     owner: apache
@@ -70,7 +70,6 @@
     group: apache
     setype: public_content_rw_t
   with_items:
-    - "index.html"
     - "abjt.png"
     - "abjt2.png"
     - "ansible-basic-playbook.png"

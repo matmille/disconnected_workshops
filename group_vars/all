@@ -137,4 +137,7 @@ www_port_workshopdocs: 8020
 www_file_configuration_workshopfiles: workshop-files.conf
 www_file_configuration_workshopfiles_template: "templates/hypervisor/{{ www_file_configuration_workshopfiles }}.j2"
 www_port_workshopfiles: 8030
+www_file_configuration_tower: tower.conf
+www_file_configuration_tower_template: "templates/hypervisor/{{ www_file_configuration_tower }}.j2"
+www_port_tower: 8040
 share_directory: /shared

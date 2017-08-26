@@ -11,11 +11,18 @@
   tags:
     - hypervisor_setup
 
+- name: Remove guest IPs from /etc/host if they already exist
+  lineinfile:
+    dest: /etc/hosts
+    regexp: ".*{{ item.name }}.default$"
+    state: absent
+  with_items:
+    - "{{ guests }}"
+  tags:
+     - hypervisor_setup
+
 - name: Reload dnsmasq if it is already running
-  service:
-    name: dnsmasq
-    state: reloaded
-    enabled: yes
+  shell: /usr/bin/pkill -HUP dnsmasq
   tags:
     - hypervisor_setup
 
@@ -470,6 +477,10 @@
   tags:
     - hypervisor_setup
 
+- name: Wait for systems to boot
+  pause:
+    minutes: 2
+
 - name: Setup forwards (Display ports to link)
   debug:
     msg: "{{ item.0.name }} {{ item.1.label }} {{ item.1.internal }} {{ item.1.external }}"
@@ -494,18 +505,6 @@
   service:
     name: "rh-workshop-{{ item.0.name }}-{{ item.1.internal }}-{{ item.1.external }}-socat.service"
     state: stopped
-    enabled: no
-  ignore_errors: yes
-  with_subelements:
-    - "{{ guests }}"
-    - ports
-  tags:
-    - hypervisor_setup
-
-- name: If forward exist already - absent
-  service:
-    name: "rh-workshop-{{ item.0.name }}-{{ item.1.internal }}-{{ item.1.external }}-socat.service"
-    state: absent
     enabled: no
   ignore_errors: yes
   with_subelements:

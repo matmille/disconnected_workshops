@@ -13,7 +13,7 @@
   tags:
     - hypervisor_setup
 
-- name: Start Apache HTTPD - Web Service (required for kickstart for network configuration)
+- name: Start Apache HTTPD - Web Service (required for kickstart)
   service:
     name: httpd
     state: started

@@ -15,6 +15,7 @@
     - "{{ www_port_RPMs }}"
     - "{{ www_port_workshopdocs }}"
     - "{{ www_port_workshopfiles }}"
+    - "{{ www_port_tower }}"
   tags:
     - hypervisor_setup
 
@@ -29,6 +30,7 @@
     - "{{ www_port_RPMs }}"
     - "{{ www_port_workshopdocs }}"
     - "{{ www_port_workshopfiles }}"
+    - "{{ www_port_tower }}"
   tags:
     - hypervisor_setup
 
