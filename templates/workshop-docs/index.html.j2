@@ -1652,7 +1652,7 @@ cat ~/.ssh/workshop-tower
 <tr><td>DESCRIPTION</td><td>Machine credential for run job templates during workshop</td></tr>
 <tr><td>ORGANIZATION</td><td>Default</td></tr>
 <tr><td>TYPE</td><td>Machine</td></tr>
-<tr><td>USERNAME</td><td>ec2-user</td></tr>
+<tr><td>USERNAME</td><td>admin</td></tr>
 <tr><td>PRIVILEGE ESCALATION</td><td>Sudo</td></tr>
 <tr><td>PRIVATE KEY</td><td>paste in secret key</td></tr>
 </table>
@@ -1676,7 +1676,7 @@ cat ~/.ssh/workshop-tower
 <tr><td valign=top>DESCRIPTION</td><td valign=top>workshop playbooks</td></tr>
 <tr><td valign=top>ORGANIZATION</td><td valign=top>Default</td></tr>
 <tr><td valign=top>SCM TYPE</td><td valign=top>Git</td></tr>
-<tr><td valign=top>SCM URL</td><td valign=top>https://github.com/ansible/lightbulb</td></tr>
+<tr><td valign=top>SCM URL</td><td valign=top>git://{{ kvm_private_network_ip }}/lightbulb/lightbulb/.git</td></tr>
 <tr><td valign=top>SCM BRANCH</td><td></td></tr>
 <td valign=top>SCM UPDATE OPTIONS</td>
 <td>
@@ -1739,7 +1739,7 @@ cat ~/.ssh/workshop-tower
 <td bgcolor="lightgrey">
 <preformatted>
 
-sudo tower-manage inventory_import --source=/home/ec2-user/hosts --inventory-name="Ansible Workshop Inventory"
+sudo tower-manage inventory_import --source=/home/admin/hosts --inventory-name="Ansible Workshop Inventory"
 
 </preformatted>
 </td>
