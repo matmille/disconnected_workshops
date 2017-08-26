@@ -21,7 +21,7 @@
 
 - name: Open firewall port(s) for GIT tcp
   firewalld:
-    port: "9148/tcp"
+    port: "9418/tcp"
     permanent: true
     state: enabled
   tags:
@@ -29,7 +29,7 @@
 
 - name: Open firewall port(s) for GIT udp
   firewalld:
-    port: "9148/udp"
+    port: "9418/udp"
     permanent: true
     state: enabled
   tags:

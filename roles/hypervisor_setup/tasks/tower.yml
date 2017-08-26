@@ -1,0 +1,66 @@
+---
+
+#####
+# Ansible Content Check
+
+- name: Stage Apache HTTPD Tower configuration file
+  template:
+    src: "{{ www_file_configuration_tower_template }}"
+    dest: "/etc/httpd/conf.d/{{ www_file_configuration_tower }}"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - hypervisor_setup
+
+- name: Start Apache HTTPD - Web Service (required for Tower)
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  tags:
+   - hypervisor_setup
+
+- name: re-Start Apache HTTPD (to ensure latest configuration is loaded)
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions
+  file:
+    path: "{{ share_directory }}/ansible"
+    mode: 0755
+    owner: apache
+    group: apache
+    setype: public_content_rw_t
+    recurse: yes
+  tags:
+    - hypervisor_setup
+
+- name: Ensure that ansible repos exist
+  stat:
+    path: "{{ share_directory }}/ansible/repodata"
+  register: repodata_ansible
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions on directories shared ansible
+  command: find "{{ share_directory }}/ansible/" -type d -exec chmod -c 0755 {} \;
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions on files shared ansible
+  command: find "{{ share_directory }}/ansible/" -type f -exec chmod -c 0644 {} \;
+  tags:
+    - hypervisor_setup
+
+- name: Set file permissions on directories shared ansible
+  command: chown -R apache:apache "{{ share_directory }}/ansible/"
+  tags:
+    - hypervisor_setup
+
+- name: Run restore context to reload SELinux
+  shell: "restorecon -Rv {{ share_directory }}/ansible"

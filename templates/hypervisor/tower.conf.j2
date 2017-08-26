@@ -1,0 +1,18 @@
+Listen *:{{ www_port_tower }}
+
+NameVirtualHost *:{{ www_port_tower }}
+
+<Directory {{ share_directory }}/ansible>
+    AllowOverride All
+    IndexOptions NameWidth=800
+    Options +Indexes +FollowSymLinks
+    Order deny,allow
+    Allow from all
+    Require all granted
+</Directory>
+
+<VirtualHost *:{{ www_port_tower }}>
+    DocumentRoot "{{ share_directory }}/ansible"
+    ErrorLog "logs/tower-error.log"
+    CustomLog "logs/tower-access.log" combined
+</VirtualHost>
