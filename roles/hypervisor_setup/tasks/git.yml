@@ -61,9 +61,26 @@
   tags:
     - hypervisor_setup
 
+- name: Create directory for SSH keys (git)
+  file:
+    path: "{{ git_projects }}/.ssh"
+    state: directory
+    owner: git
+    group: git
+    setype: ssh_home_t
+    mode: 0700
+  tags:
+    - hypervisor_setup
+
+- name: Set context on SSH directory (git)
+  sefcontext:
+    target: "{{ git_projects }}/.ssh(/.*)?"
+    setype: ssh_home_t
+    state: present
+
 - name: Stat authorized_keys
   stat:
-    path: "{{ git_projects }}/authorized_keys"
+    path: "{{ git_projects }}/.ssh/authorized_keys"
   register: stat_authorized_keys
   tags:
     - hypervisor_setup
@@ -76,6 +93,21 @@
     - "{{ guests }}"
   tags:
    - hypervisor_setup
+
+- name: Set permissions on .ssh directory for git
+  file:
+    path: "{{ git_projects }}/.ssh"
+    recurse: yes
+    owner: git
+    group: git
+    setype: ssh_home_t
+  tags:
+    - hypervisor_setup
+
+- name: Run restore context to reload SELinux
+  shell: restorecon -Rv "{{ git_projects }}/.ssh"
+  tags:
+    - hypervisor_setup
 
 #####
 # Git content
