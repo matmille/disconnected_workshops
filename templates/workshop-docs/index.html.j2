@@ -1905,12 +1905,45 @@ NIST 800-53 controls https://galaxy.ansible.com/rhtps/800-53/
 
 <h4>Step 1:</h4>
 
+<p>Create a file called requirements-800-53.yml</p>
+
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
 <preformatted>
 
-sudo ansible-galaxy install rhtps.800-53
+cd ~
+vim requirements-800-53.yml
+
+</preformatted>
+</td>
+</tr>
+</table>
+
+<p>Populate the file with the following contents:</p>
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<preformatted>
+
+---
+- name: rhtps/800-53
+  src: "git://{{ kvm_private_network_ip }}/galaxy.rhtps/ansible-role-800-53/.git"
+  scm: git
+  version: master
+
+</preformatted>
+</td>
+</tr>
+</table>
+
+<p>Run the following command to import the galaxy role.</p>
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<preformatted>
+
+sudo ansible-galaxy install -r requirements-800-53.yml
 
 </preformatted>
 </td>
@@ -2068,7 +2101,7 @@ Note the use of the register, with_items, and when directives. These are how Ans
 
 <p>Once the check is complete, you can open a new tab in your web browser, and navigate to the following URL, where workshopname is the workshop prefix, and # is the number that your instructor gave you:</p>
 
-<p>http://workshopname.node.#.redhatgov.io/scap</p>
+<p><b>Ask instructor for URI</b></p>
 
 <p>Click on the link called <b>scan-xccdf-report-...</b> refiew the SCAP report that was generated. Note the failures in the report; look at the machines, if you want, via your Wetty ssh session, to see what the problems might be.</p>
 
