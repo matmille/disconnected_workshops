@@ -9,7 +9,7 @@ rootpw --iscrypted {{ password_root }}
 
 user --name=admin --groups=wheel --password={{ password_admin }} --iscrypted
 
-firewall --enabled --ssh --port=9090:tcp
+firewall --enabled --ssh --http --port=9090:tcp
 authconfig --enableshadow --passalgo=sha512
 selinux --enforcing
 timezone --utc America/New_York
@@ -52,6 +52,7 @@ cockpit-system
 cockpit-ws
 git
 nano
+policycoreutils-python
 vim-enhanced
 %end
 

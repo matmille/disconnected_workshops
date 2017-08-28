@@ -68,7 +68,7 @@
 
 - name: Stage workshop-files - license
   get_url:
-    url: https://raw.githubusercontent.com/RedHatGov/redhatgov.workshops/master/ansible_tower/roles/ansible.tower/files/license
+    url: https://s3.amazonaws.com/ansible-tower-workshop-license/license
     dest: "{{ share_directory }}/workshop-files/license"
     mode: 0644
     owner: apache
