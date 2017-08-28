@@ -38,6 +38,7 @@
     - socat
     - virt-install
     - virt-manager
+    - xauth
     - yum-utils
   tags:
     - hypervisor_setup
