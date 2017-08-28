@@ -23,6 +23,7 @@
 
 - name: Reload dnsmasq if it is already running
   shell: /usr/bin/pkill -HUP dnsmasq
+  ignore_errors: True
   tags:
     - hypervisor_setup
 

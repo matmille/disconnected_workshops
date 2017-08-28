@@ -40,7 +40,6 @@
   lineinfile:
     path: /etc/yum.conf
     line: 'retries=0'
-  when: repo_RPMs.stat.exists == False
   tags:
     - hypervisor_setup
 
@@ -48,7 +47,6 @@
   lineinfile:
     path: /etc/yum.conf
     line: 'timeout=300'
-  when: repo_RPMs.stat.exists == False
   tags:
     - hypervisor_setup
 
@@ -60,7 +58,6 @@
     owner: apache
     group: apache
     setype: public_content_rw_t
-  when: repo_RPMs.stat.exists == False
   tags:
     - hypervisor_setup
 
@@ -71,7 +68,6 @@
     owner: apache
     group: apache
     setype: public_content_rw_t
-  when: repo_RPMs.stat.exists == True
   tags:
     - hypervisor_setup
 
@@ -87,7 +83,6 @@
     - rhel-7-server-rpms
     - rhel-7-server-extras-rpms
     - rhel-7-server-optional-rpms
-  when: repo_RPMs.stat.exists == False
   tags:
     - hypervisor_setup
 
@@ -112,7 +107,13 @@
     - rhel-7-server-rpms
     - rhel-7-server-extras-rpms
     - rhel-7-server-optional-rpms
-  when: repo_RPMs.stat.exists == True
+  tags:
+    - hypervisor_setup
+
+- name: Check for CDN connectivity
+  shell: ping cdn.redhat.com -c 5
+  register: connectivity
+  ignore_errors: True
   tags:
     - hypervisor_setup
 
@@ -122,7 +123,7 @@
     - rhel-7-server-rpms
     - rhel-7-server-extras-rpms
     - rhel-7-server-optional-rpms
-  when: repo_RPMs.stat.exists == False
+  when: connectivity|succeeded
   tags:
     - hypervisor_setup
 
@@ -150,7 +151,6 @@
 
 - name: Run createrepo against downloaded Channel(s)
   shell: createrepo --database {{ share_directory }}/RPMs
-  when: repodata_RPMs.stat.exists == False
   tags:
     - hypervisor_setup
 
