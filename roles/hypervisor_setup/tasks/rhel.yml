@@ -91,6 +91,16 @@
   tags:
     - hypervisor_setup
 
+- name: Set SELinux context of shared directory
+  sefcontext:
+    target: "{{ share_directory }}/RPMs(/.*)?"
+    setype: public_content_rw_t
+    state: present
+    reload: True
+  ignore_errors: yes
+  tags:
+    - hypervisor_setup
+
 - name: Set ownerships and permissions on Channel directory(s)
   file:
     path: "{{ share_directory }}/RPMs/{{ item }}"
