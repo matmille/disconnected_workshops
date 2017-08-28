@@ -718,16 +718,17 @@ Add a play definition and some variables to your playbook. se include addtional 
 <tr>
 <td bgcolor="lightgrey">
 <preformatted>
+
 ---
 - hosts: web
-	name: This is a play within a playbook
-	become: yes
-	vars:
-	  httpd_packages:
-	    - httpd
-	    - mod_wsgi
-	  apache_test_message: This is a test message
-	  apache_max_keep_alive_requests: 115
+    name: This is a play within a playbook
+    become: yes
+    vars:
+      httpd_packages:
+        - httpd
+        - mod_wsgi
+      apache_test_message: This is a test message
+      apache_max_keep_alive_requests: 115
 
 </preformatted>
 </td>
@@ -919,7 +920,7 @@ curl -O http://{{ kvm_private_network_ip }}:{{ www_port_workshopfiles }}/index.h
   become: yes
   vars:
     httpd_packages:
-		  - httpd
+      - httpd
       - mod_wsgi
     apache_test_message: This is a test message
     apache_max_keep_alive_requests: 115
@@ -1336,18 +1337,6 @@ ansible-playbook -i ~/hosts site.yml
 
 <p><img src="newrole.png" width=50% height=auto></p>
 
-<table cellpadding=10 width=100%>
-<tr>
-<td bgcolor="lightgrey">
-<preformatted>
-
-ansible-basic-playbook role-based stdout
-
-</preformatted>
-</td>
-</tr>
-</table>
-
 <h3>Section 4: Review</h3>
 
 <p>You should now have a completed playbook, <b>site.yml</b> with a single role called <b>apache-simple.</b>  advantage of structuring your playbook into roles is that you can now add new roles to the playbook using Ansible Galaxy or simply writing your own. In addition, roles simplify changes to variables, tasks, templates, etc.</p>
@@ -1633,7 +1622,7 @@ curl -k https://tower-1/api/v1/config/ \
 
 <h4>Step 4:</h4>
 
-<p>Complete the form using the following entries, by printing out your private SSH key to place into Tower. When you paste the key in, in the <b>PRIVATE KEY</b> field, make sure to include the <b>-----BEGIN RSA PRIVATE KEY-----</b> and <b>-----BEGIN RSA PRIVATE KEY-----</b> lines.</p>
+<p>Complete the form using the following entries:</p>
 
 <table cellpadding=10 width=100%>
 <tr>
@@ -1654,7 +1643,7 @@ cat ~/.ssh/workshop-tower
 <tr><td>TYPE</td><td>Machine</td></tr>
 <tr><td>USERNAME</td><td>admin</td></tr>
 <tr><td>PRIVILEGE ESCALATION</td><td>Sudo</td></tr>
-<tr><td>PRIVATE KEY</td><td>paste in secret key</td></tr>
+<tr><td>Password</td><td><i><b>provided server password</b></i></td></tr>
 </table>
 <p><img src="cred.png" width=50% height=auto><br>
 <i>Figure 5: Adding a Credential</i></p>
@@ -1806,7 +1795,7 @@ sudo tower-manage inventory_import --source=/home/admin/hosts --inventory-name="
 <tr><td>ANSWER VARIABLE NAME</td><td>apache_test_message</td></tr>
 <tr><td>ANSWER TYPE</td><td>Text</td></tr>
 <tr><td>MINIMUM/MAXIMUM LENGTH</td><td>Use the defaults</td></tr>
-<tr><td>DEFAULT ANSWER</td><td>Be creative, keep it clean, we're all professionals here</td></tr></table>
+<tr><td>DEFAULT ANSWER</td><td><b><i>Be creative, keep it clean, we're all professionals here</i></b></td></tr></table>
 
 <p>
 <img src="abjt.png" width=25% height=auto><br>
@@ -1875,7 +1864,7 @@ Alternatively, if you haven't navigated away from the job templates creation pag
 
 <p>Once your job is sucessful, navigate to your new website</p>
 
-<p>http://workshopname.0.redhatgov.io</p>
+<p><b><i>Ask instructor for location</i></b></p>
 
 <p>If all went well, you should see something like this, but with your own custom message of course.</p>
 
@@ -1927,7 +1916,7 @@ vim requirements-800-53.yml
 <preformatted>
 
 ---
-- name: rhtps/800-53
+- name: rhtps.800-53
   src: "git://{{ kvm_private_network_ip }}/galaxy.rhtps/ansible-role-800-53/.git"
   scm: git
   version: master
@@ -1961,7 +1950,6 @@ Now that you have the role installed on your Tower node, we need to create a pla
 <preformatted>
 
 sudo mkdir -p /var/lib/awx/projects/playbooks
-sudo vim /var/lib/awx/projects/playbooks/800-53.yml
 
 </preformatted>
 </td>
@@ -2011,6 +1999,9 @@ Note the use of the register, with_items, and when directives. These are how Ans
       file:
         name: /var/www/html/scap
         state: directory
+        owner: apache
+        group: apache
+        setype: public_content_rw_t
         mode: 0755
 
     - name: copy SCAP reports to the web server content directory
@@ -2018,6 +2009,9 @@ Note the use of the register, with_items, and when directives. These are how Ans
         remote_src: True
         src: "/tmp/scap_reports/&#123;&#123; item &#125;&#125;"
         dest: /var/www/html/scap
+        owner: apache
+        group: apache
+        setype: public_content_rw_t
         mode: 0644
       with_items: "&#123;&#123; results.stdout_lines &#125;&#125;"
       when: item | match("scan-xccdf-report-*")
