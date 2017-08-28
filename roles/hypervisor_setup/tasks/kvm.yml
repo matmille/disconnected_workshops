@@ -266,7 +266,7 @@
 - name: Set hostname of each of the systems
   copy:
     dest: /guests/{{ item.name }}/etc/yum.repos.d/RPMs.repo
-    content: "[RPMs]\nname=RPMS\ngpgcheck=1\nenabled=1\nbaseurl=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}"
+    content: "[RPMs]\nname=RPMS\ngpgcheck=1\nenabled=1\nbaseurl=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}\n\n[rhel-7-server-rpms]\nname=rhel-7-server-rpms\ngpgcheck=1\nenabled=1\nbaseurl=http://{{ kvm_private_network_ip }}:{{ www_port_RPMs }}\n"
     owner: root
     group: root
     mode: 0644
