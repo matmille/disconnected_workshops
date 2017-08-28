@@ -514,8 +514,11 @@
     - hypervisor_setup
 
 - name: Resolve Guest IP addresses
-  command: "dig @{{ kvm_private_network_ip }} +short {{ item.name }}.default"
+  shell: "dig @{{ kvm_private_network_ip }} +short {{ item.name }}.default | grep -v -e '^$' || exit 1"
   register: resolved_IPs
+  ignore_errors: yes
+  retries: 10
+  delay: 60
   with_items:
     - "{{ guests }}"
   tags:
