@@ -722,14 +722,14 @@ Add a play definition and some variables to your playbook. se include addtional 
 
 ---
 - hosts: web
-    name: This is a play within a playbook
-    become: yes
-    vars:
-      httpd_packages:
-        - httpd
-        - mod_wsgi
-      apache_test_message: This is a test message
-      apache_max_keep_alive_requests: 115
+  name: This is a play within a playbook
+  become: yes
+  vars:
+    httpd_packages:
+      - httpd
+      - mod_wsgi
+    apache_test_message: This is a test message
+    apache_max_keep_alive_requests: 115
 
 </preformatted>
 </td>
