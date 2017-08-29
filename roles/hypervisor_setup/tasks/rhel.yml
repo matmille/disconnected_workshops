@@ -118,7 +118,7 @@
     - hypervisor_setup
 
 - name: Download Channel
-  shell: reposync --gpgcheck -l --repoid={{ item }} --norepopath --download_path={{ share_directory }}/RPMs/{{ item }}
+  shell: reposync --gpgcheck -l --repoid={{ item }} --norepopath --download_path={{ share_directory }}/RPMs/{{ item }} >> /var/log/reposync.log
   with_items:
     - rhel-7-server-rpms
     - rhel-7-server-extras-rpms
