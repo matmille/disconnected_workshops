@@ -226,6 +226,15 @@
   tags:
     - hypervisor_setup
 
+- name: Unmount leftover guest filesystems, if present
+  shell: "guestunmount /guests/{{ item.name }}"
+  args:
+    removes: "/guests/{{ item.name }}.pid"
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
 - name: Create directory for guestmount FUSE filesystems
   file:
     path: /guests/{{ item.name }}
@@ -237,7 +246,9 @@
     - hypervisor_setup
 
 - name: Mount root filesystem for all guests to the hypervisor
-  shell: guestmount -m /dev/VolGroup/LogVol06:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  shell: "guestmount -m /dev/VolGroup/LogVol06:/:defaults -d {{ item.name }} --pid-file /guests/{{ item.name }}.pid -o allow_other /guests/{{ item.name }}"
+  args:
+    creates: "/guests/{{ item.name }}.pid"
   with_items:
     - "{{ guests }}"
   tags:
@@ -278,9 +289,12 @@
 
 - name: Create directory for guest SSH host keys (hypervisor)
   file:
-    path: /guests/.ssh-host-keys
+    path: "/guests/{{ item }}"
     state: directory
     mode: 0700
+  with_items:
+    - .ssh
+    - .ssh-host-keys
   tags:
     - hypervisor_setup
 
@@ -304,13 +318,17 @@
 
 - name: un-Mount root filesystem for all guests to the hypervisor
   shell: guestunmount /guests/{{ item.name }}
+  args:
+    removes: "/guests/{{ item.name }}.pid"
   with_items:
     - "{{ guests }}"
   tags:
     - hypervisor_setup
 
 - name: Mount home filesystem for all guests to the hypervisor
-  shell: guestmount -m /dev/VolGroup/LogVol02:/:defaults -d {{ item.name }} /guests/{{ item.name }}
+  shell: "guestmount -m /dev/VolGroup/LogVol02:/:defaults -d {{ item.name }} --pid-file /guests/{{ item.name }}.pid -o allow_other /guests/{{ item.name }}"
+  args:
+    creates: "/guests/{{ item.name }}.pid"
   with_items:
     - "{{ guests }}"
   tags:
@@ -320,8 +338,8 @@
   copy:
     dest: "/guests/{{ item.name }}/admin/ansible.cfg"
     content: "[defaults]\nconnection = smart\ntimeout = 60\nforks = 10\ninventory = /home/admin/hosts\n"
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     mode: 0644
   with_items:
     - "{{ guests }}"
@@ -332,8 +350,8 @@
   copy:
     src: "{{ share_directory }}/workshop-files/.vimrc"
     dest: "/guests/{{ item.name }}/admin/.vimrc"
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     mode: 0644
   with_items:
     - "{{ guests }}"
@@ -344,8 +362,8 @@
   file:
     path: /guests/{{ item.name }}/admin/.ssh
     state: directory
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     setype: ssh_home_t
     mode: 0700
   with_items:
@@ -365,8 +383,8 @@
 - name: Set ownership on SSH keys (private key)
   file:
     path: /guests/{{ item.name }}/admin/.ssh/id_ecdsa
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     setype: ssh_home_t
   with_items:
     - "{{ guests }}"
@@ -376,8 +394,8 @@
 - name: Set ownership on SSH keys (public key)
   file:
     path: /guests/{{ item.name }}/admin/.ssh/id_ecdsa.pub
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     setype: ssh_home_t
   with_items:
     - "{{ guests }}"
@@ -405,8 +423,8 @@
 - name: Set ownership on SSH keys (authorized_keys)
   file:
     path: /guests/{{ item.name }}/admin/.ssh/authorized_keys
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     setype: ssh_home_t
     mode: 0644
   with_items:
@@ -426,8 +444,8 @@
 - name: Set ownership on SSH keys (known_hosts)
   file:
     path: /guests/{{ item.name }}/admin/.ssh/known_hosts
-    owner: admin
-    group: admin
+    owner: "{{ id_admin }}"
+    group: "{{ gid_admin }}"
     setype: ssh_home_t
     mode: 0644
   with_items:
@@ -444,6 +462,8 @@
 
 - name: un-Mount home filesystem for all guests to the hypervisor
   shell: guestunmount /guests/{{ item.name }}
+  args:
+    removes: "/guests/{{ item.name }}.pid"
   with_items:
     - "{{ guests }}"
   tags:
