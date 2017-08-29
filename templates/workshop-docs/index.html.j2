@@ -722,14 +722,14 @@ Add a play definition and some variables to your playbook. se include addtional 
 
 ---
 - hosts: web
-    name: This is a play within a playbook
-    become: yes
-    vars:
-      httpd_packages:
-        - httpd
-        - mod_wsgi
-      apache_test_message: This is a test message
-      apache_max_keep_alive_requests: 115
+  name: This is a play within a playbook
+  become: yes
+  vars:
+    httpd_packages:
+      - httpd
+      - mod_wsgi
+    apache_test_message: This is a test message
+    apache_max_keep_alive_requests: 115
 
 </preformatted>
 </td>
@@ -1514,7 +1514,7 @@ sudo bash ./setup.sh
 
 <h3>Configuring Ansible Tower</h3>
 
-<p>re are a number of contructs in the Ansible Tower UI that enable multi-tenancy, notifications, scheduling, etc. However, we are only going to focus on a few of the key contructs that are required for this workshop today.</p>
+<p>There are a number of contructs in the Ansible Tower UI that enable multi-tenancy, notifications, scheduling, etc. However, we are only going to focus on a few of the key contructs that are required for this workshop today.</p>
 
 <ul>
 <li>Credentials
@@ -1611,17 +1611,6 @@ curl -k https://tower-1/api/v1/config/ \
 
 <p>Complete the form using the following entries:</p>
 
-<table cellpadding=10 width=100%>
-<tr>
-<td bgcolor="lightgrey">
-<preformatted>
-
-cat ~/.ssh/workshop-tower
-
-</preformatted>
-</td>
-</tr>
-</table>
 <p></p>
 <table border=1>
 <tr><td>NAME</td><td>Ansible Workshop Credential</td></tr>
