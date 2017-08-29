@@ -126,6 +126,7 @@
   when: connectivity|succeeded
   tags:
     - hypervisor_setup
+    - sync_channels
 
 - name: Set file permissions
   file:
@@ -153,6 +154,7 @@
   shell: createrepo --database {{ share_directory }}/RPMs
   tags:
     - hypervisor_setup
+    - sync_channels
 
 - name: Set file permissions on directories shared RPMS
   command: find "{{ share_directory }}/RPMs/" -type d -exec chmod -c 0755 {} \;

@@ -50,6 +50,23 @@
   tags:
     - hypervisor_setup
 
+- name: Define setup table
+  set_fact:
+    workshopdocssetup: "<table border=1> <tr><th>Hostname</th><th>Service</th><th>Internal Port</th><th>External Port</th></tr>"
+
+- name: Populate table
+  set_fact:
+    workshopdocssetup: " {{ workshopdocssetup }} <tr><td>{{ item.0.name }}</td><td>{{ item.1.label }}</td><td>{{ item.1.internal }}</td><td>{{ item.1.external }}</td></tr>"
+  with_subelements:
+    - "{{ guests }}"
+    - ports
+  tags:
+    - hypervisor_setup
+
+- name: Close table
+  set_fact:
+    workshopdocssetup: " {{ workshopdocssetup }} </table>"
+
 - name: Copy workshop homepage to workshop-docs
   template:
     src: "templates/workshop-docs/index.html.j2"
