@@ -14,6 +14,7 @@
     - cockpit-shell
     - cockpit-system
     - cockpit-ws
+    - coreutils
     - createrepo
     - git
     - gitweb
@@ -36,6 +37,7 @@
     - qemu-kvm-tools
     - rpcbind
     - samba
+    - sed
     - socat
     - virt-install
     - virt-manager
