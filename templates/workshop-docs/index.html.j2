@@ -1918,14 +1918,18 @@ sudo ansible-galaxy install -r requirements-800-53.yml
 <h4>Step 2:</h4>
 
 <p>
-Now that you have the role installed on your Tower node, we need to create a playbook that uses it. First, let's create a storage directory for playbooks, so that we can reference them from a Tower project, and then we'll create the playbook:</p>
+Now that you have the role installed on your Tower node, we need to create a playbook that uses it. First, clone your GIT repository to the Tower node</p>
 
+<b><i>Example for the user using node-1</i></b>
 <table cellpadding=10 width=100%>
 <tr>
 <td bgcolor="lightgrey">
 <preformatted>
 
-sudo mkdir -p /var/lib/awx/projects/playbooks
+mkdir secure
+cd secure
+git clone ssh://git@{{ kvm_private_network_ip }}/var/lib/git/section_3.0/node-1/
+cd node-1
 
 </preformatted>
 </td>
@@ -1942,7 +1946,7 @@ Let's create the needed playbook. You should have a pretty good understanding of
 <td bgcolor="lightgrey">
 <preformatted>
 
-sudo vim /var/lib/awx/projects/playbooks/800-53.yml
+vim 800-53.yml
 
 </preformatted>
 </td>
@@ -1999,7 +2003,24 @@ Note the use of the register, with_items, and when directives. These are how Ans
 
 <h4>Step 4:</h4>
 
-<p>Save and quit from editing, and then we will move on to the in-Tower setup.</p>
+
+<p>Save and quit from editing, check-in your work, and then we will move on to the in-Tower setup.</p>
+
+<table cellpadding=10 width=100%>
+<tr>
+<td bgcolor="lightgrey">
+<preformatted>
+
+git config --global user.name "<b><i>Your Name</i></b>"
+git config --global user.email <b><i>you@example.com</i></b>
+git add 800-53.yml
+git commit -m "800-53 playbook" 800-53.yml
+git push origin master
+
+</preformatted>
+</td>
+</tr>
+</table>
 
 <h3>Configuring a security project and job template in Ansible Tower</h3>
 

@@ -130,6 +130,16 @@
   tags:
     - hypervisor_setup
 
+- name: Ensure all created Virtual Machines autostart
+  virt:
+    name: "{{ item.name }}"
+    command: nodeinfo
+    autostart: yes
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
 - name: Ensure all created Virtual Machines are running
   virt:
     name: "{{ item.name }}"
@@ -543,12 +553,11 @@
   tags:
     - hypervisor_setup
     - resolveIP
+    - resolveIPupdate
 
 - name: Display Guest IP addresses
   debug:
     msg: "{{ resolved_IPs }}"
-  with_items:
-    - "{{ guests }}"
   tags:
     - hypervisor_setup
     - resolveIP
@@ -573,6 +582,7 @@
     - "{{ resolved_IPs.results }}"
   tags:
     - hypervisor_setup
+    - resolveIPupdate
 
 - name: Start socat services
   service:

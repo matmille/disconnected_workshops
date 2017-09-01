@@ -259,3 +259,40 @@
     recursive: yes
   tags:
     - hypervisor_setup
+
+- name: Remove directory for section if it exists
+  file:
+    path: "{{ git_projects }}/section_3.0"
+    state: absent
+  tags:
+    - hypervisor_setup
+
+- name: Create directory for security section
+  file:
+    path: "{{ git_projects }}/section_3.0"
+    state: directory
+    owner: git
+    group: git
+    mode: 0775
+  tags:
+    - hypervisor_setup
+
+- name: Create GIT Repositories
+  command: "git init --bare --shared {{ item.name }}"
+  args:
+    chdir: "{{ git_projects }}/section_3.0"
+    creates: "{{ git_projects }}/section_3.0/{{ item.name }}/HEAD"
+  when: "'node-' in item.name"
+  with_items:
+    - "{{ guests }}"
+  tags:
+    - hypervisor_setup
+
+- name: Set ownership on files and directories
+  file:
+    path: "{{ git_projects }}/section_3.0"
+    owner: git
+    group: git
+    recurse: yes
+  tags:
+    - hypervisor_setup
