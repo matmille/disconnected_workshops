@@ -153,8 +153,9 @@
   synchronize:
     src: "{{ share_directory }}/galaxy.MindPointGroup/"
     dest: "{{ git_projects }}/galaxy.MindPointGroup/"
+    archive: yes
+    copy_links: yes
     delete: yes
-    recursive: yes
   tags:
     - hypervisor_setup
 
@@ -196,11 +197,12 @@
     - hypervisor_setup
 
 - name: Stage Ansible Galaxy role (NIST 800-53) in GIT path
-  synchronize:
-    src: "{{ share_directory }}/galaxy.rhtps/"
-    dest: "{{ git_projects }}/galaxy.rhtps/"
-    delete: yes
-    recursive: yes
+  shell: "rsync -av --del {{ share_directory }}/galaxy.rhtps/ {{ git_projects }}/galaxy.rhtps/"
+#  synchronize:
+#    src: "{{ share_directory }}/galaxy.rhtps/"
+#    dest: "{{ git_projects }}/galaxy.rhtps/"
+#    delete: yes
+#    recursive: yes
   tags:
     - hypervisor_setup
 
@@ -252,11 +254,12 @@
     - hypervisor_setup
 
 - name: Stage lightbulb in GIT path
-  synchronize:
-    src: "{{ share_directory }}/lightbulb/"
-    dest: "{{ git_projects }}/lightbulb/"
-    delete: yes
-    recursive: yes
+  shell: "rsync -av --del {{ share_directory }}/lightbulb/ {{ git_projects }}/lightbulb/"
+#  synchronize:
+#    src: "{{ share_directory }}/lightbulb/"
+#    dest: "{{ git_projects }}/lightbulb/"
+#    delete: yes
+#    recursive: yes
   tags:
     - hypervisor_setup
 
