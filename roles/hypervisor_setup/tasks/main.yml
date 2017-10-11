@@ -41,6 +41,7 @@
     - socat
     - virt-install
     - virt-manager
+    - virt-viewer
     - xauth
     - yum-utils
   tags:

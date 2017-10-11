@@ -62,7 +62,16 @@
     name: "{{ kvm_private_network_name }}"
     xml: '{{ lookup("template", "templates/hypervisor/private-net.xml.j2") }}'
     autostart: yes
-    state: present
+#    state: present
+    state: active
+#  when: kvm_private_network_name not in kvm_networks.list_nets
+  tags:
+    - hypervisor_setup
+
+- name: restart libvirt before starting networks
+  service:
+    name: libvirtd
+    state: restarted
   when: kvm_private_network_name not in kvm_networks.list_nets
   tags:
     - hypervisor_setup
@@ -89,9 +98,11 @@
     - hypervisor_setup
 
 - name: Create RHEL ISO for VM Installation
-  shell: dd if=/dev/cdrom of=/var/lib/libvirt/images/rhel7.iso
+#  shell: dd if=/dev/cdrom of=/var/lib/libvirt/images/rhel7.iso
+  shell: dd if=/dev/cdrom of=/shared/rhel7.iso
   args:
-    creates: /var/lib/libvirt/images/rhel7.iso
+#    creates: /var/lib/libvirt/images/rhel7.iso
+    creates: /shared/rhel7.iso
   tags:
     - hypervisor_setup
 

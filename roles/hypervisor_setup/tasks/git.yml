@@ -163,12 +163,13 @@
    - hypervisor_setup
 
 - name: Stage Ansible Galaxy role (STIG) in GIT path
-  synchronize:
-    src: "{{ share_directory }}/galaxy.MindPointGroup/"
-    dest: "{{ git_projects }}/galaxy.MindPointGroup/"
-    archive: yes
-    copy_links: yes
-    delete: yes
+  shell: "rsync -av --del {{ share_directory }}/galaxy.MindPointGroup/ {{ git_projects }}/galaxy.MindPointGroup/"
+#  synchronize:
+#    src: "{{ share_directory }}/galaxy.MindPointGroup/"
+#    dest: "{{ git_projects }}/galaxy.MindPointGroup/"
+#    archive: yes
+#    copy_links: yes
+#    delete: yes
   tags:
     - hypervisor_setup
 
