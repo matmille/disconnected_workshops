@@ -118,6 +118,7 @@
   register: galaxy_MindPointGroup_RHEL7_STIG
   tags:
     - hypervisor_setup
+    - download
 
 - name: Create directory for Ansible Galaxy role (STIG) in share_directory
   file:
@@ -129,6 +130,7 @@
   when: galaxy_MindPointGroup_RHEL7_STIG.stat.exists == False
   tags:
     - hypervisor_setup
+    - download
 
 - name: Clone RHEL7-STIG.git from Ansible Galaxy if it does not exist
   command: git clone https://github.com/MindPointGroup/RHEL7-STIG.git
@@ -138,6 +140,7 @@
   when: galaxy_MindPointGroup_RHEL7_STIG.stat.exists == False
   tags:
     - hypervisor_setup
+    - download
 
 - name: Create directory for Ansible Galaxy role (STIG) in GIT path
   file:
@@ -165,6 +168,7 @@
   register: galaxy_rhtps_800_53
   tags:
     - hypervisor_setup
+    - download
 
 - name: Create directory for Ansible Galaxy role (NIST 800-53) in share_directory
   file:
@@ -176,6 +180,7 @@
   when: galaxy_rhtps_800_53.stat.exists == False
   tags:
     - hypervisor_setup
+    - download
 
 - name: Clone rhtps.800-53 from Ansible Galaxy if it does not exist
   command: git clone https://github.com/rhtps/ansible-role-800-53.git
@@ -185,6 +190,7 @@
   when: galaxy_rhtps_800_53.stat.exists == False
   tags:
     - hypervisor_setup
+    - download
 
 - name: Create directory for Ansible Galaxy roles (NIST 800-53)
   file:
@@ -233,6 +239,7 @@
   when: lightbulb.stat.exists == False
   tags:
     - hypervisor_setup
+    - download
 
 - name: Clone lightbuilb from GitHub if it does not exist
   command: git clone https://github.com/ansible/lightbulb
@@ -242,6 +249,7 @@
   when: lightbulb.stat.exists == False
   tags:
     - hypervisor_setup
+    - download
 
 - name: Create directory for lightbulb
   file:
