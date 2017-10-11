@@ -62,6 +62,17 @@
     name: "{{ kvm_private_network_name }}"
     xml: '{{ lookup("template", "templates/hypervisor/private-net.xml.j2") }}'
     autostart: yes
+    state: present
+  when: kvm_private_network_name not in kvm_networks.list_nets
+  tags:
+    - hypervisor_setup
+
+- name: Activate private network
+  virt_net:
+    command: define
+    name: "{{ kvm_private_network_name }}"
+    xml: '{{ lookup("template", "templates/hypervisor/private-net.xml.j2") }}'
+    autostart: yes
 #    state: present
     state: active
 #  when: kvm_private_network_name not in kvm_networks.list_nets
