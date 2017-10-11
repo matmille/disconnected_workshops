@@ -45,6 +45,7 @@
     - xauth
     - yum-utils
   tags:
+    - download
     - hypervisor_setup
 
 #####
