@@ -159,7 +159,6 @@
    - rhel-7-server-optional-rpms
   tags:
     - hypervisor_setup
-    - download
 
 - name: Ensure that RPMs repos exist
   stat:

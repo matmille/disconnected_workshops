@@ -136,11 +136,21 @@
   command: git clone https://github.com/MindPointGroup/RHEL7-STIG.git
   args:
     chdir: "{{ share_directory }}/galaxy.MindPointGroup"
-  become_user: git
+#  become_user: git
   when: galaxy_MindPointGroup_RHEL7_STIG.stat.exists == False
   tags:
     - hypervisor_setup
     - download
+
+- name: Set file permissions on Ansible Galaxy role (STIG)
+  file:
+    path: "{{ share_directory }}/galaxy.MindPointGroup"
+    owner: git
+    group: git
+#    setype: public_content_rw_t
+    recurse: yes
+  tags:
+    - hypervisor_setup
 
 - name: Create directory for Ansible Galaxy role (STIG) in GIT path
   file:
@@ -174,23 +184,42 @@
   file:
     path: "{{ share_directory }}/galaxy.rhtps"
     state: directory
-    owner: git
-    group: git
     mode: 0775
   when: galaxy_rhtps_800_53.stat.exists == False
   tags:
     - hypervisor_setup
     - download
 
+- name: Set file permissions on Ansible Galaxy role (NIST 800-53)
+  file:
+    state: directory
+    path: "{{ share_directory }}/galaxy.rhtps"
+    owner: git
+    group: git
+    mode: 0775
+#    setype: public_content_rw_t
+  tags:
+    - hypervisor_setup
+
 - name: Clone rhtps.800-53 from Ansible Galaxy if it does not exist
   command: git clone https://github.com/rhtps/ansible-role-800-53.git
   args:
     chdir: "{{ share_directory }}/galaxy.rhtps"
-  become_user: git
+#  become_user: git
   when: galaxy_rhtps_800_53.stat.exists == False
   tags:
     - hypervisor_setup
     - download
+
+- name: Set ownership on Ansible Galaxy role (STIG)
+  file:
+    path: "{{ share_directory }}/galaxy.rhtps"
+    owner: git
+    group: git
+#    setype: public_content_rw_t
+    recurse: yes
+  tags:
+    - hypervisor_setup
 
 - name: Create directory for Ansible Galaxy roles (NIST 800-53)
   file:
@@ -228,13 +257,12 @@
   register: lightbulb
   tags:
     - hypervisor_setup
+    - download
 
 - name: Create directory for lightbulb in share_directory
   file:
     path: "{{ share_directory }}/lightbulb"
     state: directory
-    owner: git
-    group: git
     mode: 0775
   when: lightbulb.stat.exists == False
   tags:
@@ -245,11 +273,21 @@
   command: git clone https://github.com/ansible/lightbulb
   args:
     chdir: "{{ share_directory }}/lightbulb"
-  become_user: git
+#  become_user: git
   when: lightbulb.stat.exists == False
   tags:
     - hypervisor_setup
     - download
+
+- name: Set file ownership on lightbulb
+  file:
+    path: "{{ share_directory }}/lightbulb"
+    owner: git
+    group: git
+    recurse: yes
+#    setype: public_content_rw_t
+  tags:
+    - hypervisor_setup
 
 - name: Create directory for lightbulb
   file:
